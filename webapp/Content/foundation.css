@@ -1,0 +1,776 @@
+﻿/* Move down content because we have a fixed navbar that is 50px tall */
+html {
+    font-size: 14px;
+}
+
+body {
+    padding-top: 50px;
+    padding-bottom: 0px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    _padding-left: 15px;
+    _padding-right: 15px;
+}
+
+.container-fluid.body-content {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+.hgResult[template="multipleselect"] td {
+    padding: 0;
+}
+
+
+/* Wes Edits */
+/* override boostrap 4 */
+a {
+    color: #337AB7;
+}
+
+.btn-primary {
+    background-color: #337AB7;
+}
+
+
+.pageheight {
+    overflow: auto;
+    _padding-left: 15px;
+}
+
+.table caption {
+    background-color: gainsboro;
+    height: 30px;
+    font-size: larger;
+    font-weight: bold;
+    padding: 5px;
+    text-align: left;
+}
+
+table.tablesorter thead tr .header {
+    color: cornflowerblue;
+    cursor: pointer;
+}
+
+table.fixedheader thead tr:first-child th {
+    position: sticky;
+    _top: 1px;
+    _box-shadow: inset 0px -1px white;
+}
+
+table.fixedheader thead tr:not(:first-child) th {
+    position: sticky;
+    _top: 71px;
+    Background-color: white;
+    _vertical-align: top;
+    box-shadow: inset 0px -.5px silver;
+}
+
+table.fixedheader thead tr td {
+    font-weight: bold;
+}
+
+table.js-dynamitable thead:first-child tr:last-child th {
+    color: cornflowerblue;
+    cursor: pointer;
+}
+
+table.table {
+    empty-cells: show;
+}
+
+    table.table td, th {
+        padding: 8px;
+    }
+
+
+/* override ingeritance of table css in bootstrap 4 */
+.hg table td {
+    border: 0;
+    padding: 0;
+}
+
+.vg table td {
+    border: 0;
+    padding: 0;
+}
+
+.hgeditformtable table td {
+    border: 0;
+    padding: 0;
+}
+
+.hgTitle tr:hover {
+    background-color: transparent !important;
+}
+
+.hg table tr:hover {
+    background-color: transparent !important;
+}
+
+.vg table tr:hover {
+    background-color: transparent !important;
+}
+
+
+.js-sorter {
+    color: cornflowerblue;
+    cursor: pointer;
+}
+
+.sortnew {
+    _display: none;
+}
+
+.sortasc {
+    _content: '\25BA';
+    display: block;
+}
+
+.sortdesc {
+    _content: '\25BA';
+    display: block;
+}
+
+
+.tablediv {
+    _border: 1px solid #000;
+}
+
+table.hgResult tr td {
+    border: none;
+    text-align: left !important;
+}
+
+table.hgResult {
+    display: block;
+    _width: 100%;
+    _height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+    table.hgResult:focus {
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    }
+
+    table.hgResult input {
+        margin: 8px !important;
+    }
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
+.hgeditformheader {
+    color: #fff;
+    padding: 15px 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #428bca;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.hgeditformlabel {
+    padding-top: 12px !important;
+    width: 25%;
+    _white-space: nowrap;
+}
+
+.hgNewRecord {
+    height: 32px;
+}
+
+.datetimepickerdiv {
+    position: relative;
+}
+
+.hgTitle {
+    background-color: #c9dfe8 !important;
+}
+
+.FieldRequired {
+    color: red;
+}
+
+#tabvgParameters th.vgTitle {
+    text-align: center !important;
+    background-color: #EAF2FA !important;
+}
+
+.hgTitleSplitter {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+    .hgTitleSplitter td {
+        padding: 0;
+        width: 33%;
+    }
+
+.hgHeaderRow th {
+    vertical-align: top !important;
+}
+
+
+.ui-dialog {
+    padding: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+}
+
+.ui-widget-header {
+    background-color: #6b87bf;
+    border: 0;
+    color: #fff;
+    font-weight: normal;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 1em 1em;
+    position: relative;
+    font-size: 1em;
+    outline-width: 0 !important;
+}
+
+.ui-dialog .ui-dialog-title {
+    width: 80%;
+}
+
+.no-close .ui-dialog-titlebar button {
+    visibility: hidden;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding: 0;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    padding: 1em 1em 1em 1em;
+    margin-top: 0;
+}
+
+    .ui-dialog .ui-dialog-buttonpane button {
+        outline: 0;
+        _outline: 1px solid gray;
+        _outline-style: outset;
+        padding: .4em 1em;
+        border: 1px solid ghostwhite;
+        border-style: outset;
+        border-radius: 4px;
+    }
+
+.ui-state-active {
+    background-color: #d6e0f1 !important;
+}
+
+
+.ui-widget {
+    background-color: #ffffff;
+}
+
+    .ui-widget a {
+        color: #337ab7 !important;
+        _text-decoration: none;
+    }
+
+
+
+.LayoutTable {
+    width: 100%;
+    border: 1px solid #000;
+    padding: 0;
+}
+
+    .LayoutTable td {
+        vertical-align: top;
+        padding: 0;
+    }
+
+.tdFormField {
+    width: 70%;
+}
+
+.tdFormValue {
+    width: 30%;
+    _height: 50px;
+}
+
+    .tdFormValue input {
+        width: 160px;
+    }
+
+    .tdFormValue span {
+        width: 160px;
+        text-align: right;
+    }
+
+    .tdFormValue select {
+        width: 160px;
+    }
+
+/* Right Left */
+/*
+.tabLeftRight .tdLeft{
+    width: 180px;
+    background-color: #eef2fa;
+    padding-top: 32px;
+}
+
+.tabLeftRight .tdRight{
+    padding: 0;
+}
+*/
+/* left right page*/
+.LeftRightTable {
+    width: 100%;
+    padding: 0px;
+}
+
+    .LeftRightTable td {
+        vertical-align: top;
+        padding: 0;
+    }
+
+    .LeftRightTable .LeftTD {
+        width: 320px;
+        background-color: #edf4f7;
+    }
+
+        .LeftRightTable .LeftTD .LeftMenuTitle {
+            padding: 10px 10px 10px 10px;
+            font-weight: bold;
+            background-color: #93bfd2;
+        }
+
+    .LeftRightTable .LeftTable {
+        width: 100%;
+    }
+
+    .LeftRightTable .LeftMenuCategory {
+        font-weight: bold;
+        padding: 10px 10px 10px 20px;
+        background-color: #c9dfe8;
+    }
+
+    .LeftRightTable .LeftMenuItem {
+        color: #337ab7;
+        _font-weight: bold;
+        padding: 6px 4px 6px 30px;
+        cursor: pointer;
+    }
+
+    .LeftRightTable .LeftMenuSelectItem {
+        padding: 4px 20px 4px 30px;
+    }
+
+
+/* Left Menu */
+.LeftMenu .hgTitle {
+    background-color: #93bfd2 !important;
+}
+
+.LeftMenu .hgHeaderRow {
+    background-color: #c9dfe8 !important;
+}
+
+    .LeftMenu .hgHeaderRow th {
+        background-color: #93bfd2 !important;
+        padding-left: 20px !important;
+    }
+
+.LeftMenu tbody td {
+    padding-left: 30px !important;
+}
+
+.LeftMenu .badge {
+    background-color: #c9dfe8 !important;
+    color: #337AB7;
+    font-weight: normal;
+}
+
+.LeftMenuTD {
+    padding: 15px !important;
+}
+
+.LeftMenuTitle {
+    cursor: default;
+}
+
+
+/* Confirm- dialog*/
+.confirm-dialog {
+    position: relative;
+    margin: 20px;
+}
+
+.message-dialog {
+    position: relative;
+    margin: 20px;
+}
+
+.vg {
+    margin: 10px;
+    width: calc(100% - 20px);
+}
+
+span[id^=PlusMinus] a {
+    text-decoration: none !important;
+}
+
+
+.RowGroup0 td {
+    color: #337AB7;
+    background-color: #d8e0f3 !important;
+    text-align: left !important;
+}
+/*
+.RowGroupCollpased td {
+
+    background-color: #f2f2f2 !important;
+}
+*/
+.RowGroup1 td {
+    color: #337AB7;
+    background-color: #d8e0f3 !important;
+    text-align: left !important;
+    text-align: left !important;
+    padding-left: 40px !important;
+}
+
+.RowGroup2 td {
+    color: #337AB7;
+    background-color: #d8e0f3 !important;
+    text-align: left !important;
+    padding-left: 60px !important;
+}
+
+.RowGroup3 td {
+    color: #337AB7;
+    background-color: #d8e0f3 !important;
+    text-align: left !important;
+    padding-left: 80px !important;
+}
+
+.RowGroupBadge {
+    _background-color: #BFBFBF;
+    background-color: #c9dfe8 !important;
+    color: #337AB7;
+    font-weight: normal;
+}
+
+.LoginFormBox {
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    width: 460px;
+    color: #000;
+    background-color: #ffffff;
+    padding: 25px;
+    opacity: 0.95;
+    _border-radius: 10px;
+}
+
+.form-control-w {
+    /*font-weight: normal;*/
+    padding: 6px;
+    border-radius: 7px;
+}
+
+.waitgif {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.clients {
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    _margin: 40px;
+    border-radius: 5px;
+    border: solid 1px lightgray;
+    top: 0px;
+    left: 0px;
+    width: 400px;
+    height: 200px;
+    overflow: auto;
+    display: none;
+    z-index: 1000;
+}
+
+.CounterColumn {
+    background: #cccccc;
+    border-radius: 0.8em;
+    -moz-border-radius: 0.8em;
+    -webkit-border-radius: 0.8em;
+    color: #ffffff;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1.6em;
+    margin-right: 5px;
+    text-align: center;
+    width: 1.6em;
+}
+
+.glyphicon {
+    position: static;
+}
+
+#tabGridRequest tbody tr {
+    height: 60px;
+}
+
+    #tabGridRequest tbody tr td {
+        vertical-align: middle;
+    }
+
+.zminus {
+    _z-index: -1 !important;
+    _position: relative;
+}
+
+
+#divPanel {
+    overflow: auto;
+    _border: 1px solid #000;
+    margin: 0;
+    padding: 1px;
+}
+
+.control-label {
+    padding-top: 8px;
+}
+
+.test-button {
+    background-color: royalblue !important;
+    color: white !important;
+    width: 400px !important;
+    white-space: normal !important;
+}
+
+.test-title {
+    font-weight: bold !important;
+}
+
+.test-description {
+    font-size: .9em !important;
+}
+
+.test-option {
+    background-color: white !important;
+    padding: 12px !important;
+    max-width: 600px;
+    font-size: .9em;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.test-option-text {
+    margin-top: 10px;
+    _height: 100px;
+    _overflow: auto;
+}
+
+.test-option a {
+    background-color: royalblue !important;
+    color: white !important;
+    width: 100% !important;
+}
+
+.Qualify-Title {
+    font-weight: bold;
+}
+
+.Qualify-Subtitle {
+    font-weight: normal;
+}
+
+.registration-form {
+    width: 400px;
+}
+
+    .registration-form input, textarea {
+        margin-bottom: 2px;
+    }
+
+    .registration-form a {
+        margin-bottom: 8px;
+        margin-top: 8px;
+    }
+
+
+    .registration-form span {
+        font-size: .6em !important;
+        color: silver !important;
+        float: left;
+    }
+
+    .registration-form .disclaimer {
+        text-align: left;
+    }
+
+    .registration-form .checkboxes {
+        text-align: left;
+        color: gray;
+        margin-bottom: 2px;
+    }
+
+        .registration-form .checkboxes input[type=checkbox] {
+            margin-right: 12px;
+            color: gray;
+        }
+
+#spnCart {
+    vertical-align: top;
+    font-family: Arial;
+    font-size: .8em;
+    padding-left: 10px;
+}
+
+.order td {
+    padding-right: 10px;
+    padding-bottom: 2px;
+    vertical-align: middle;
+}
+
+.checkout-form {
+    width: 400px;
+    margin: 10px;
+    _border: 1px solid #000;
+}
+
+    .checkout-form .checkout-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        padding: 10px 0px 10px 0px;
+    }
+
+    .checkout-form .checkout-subtitle {
+        font-size: 1em;
+        font-weight: bold;
+        padding: 10px 0px 10px 0px;
+    }
+
+    .checkout-form .sq-input {
+        border: 1px solid #cccccc;
+        width: 95%;
+    }
+
+.Coupon {
+    border-radius: 4px;
+    border-color: whitesmoke;
+    width: 150px;
+}
+
+.Appointment {
+    border-radius: 4px;
+    border-color: whitesmoke;
+    width: 150px;
+}
+
+.Period {
+    border-radius: 4px;
+    _border-color: whitesmoke;
+    background-color: cornflowerblue;
+    font-weight: normal;
+    width: 60px;
+    padding: 4px;
+    margin: 4px;
+    text-align: center;
+}
+
+.highlightsearchterm {
+    color: tomato;
+}
+
+html.translated-ltr .navbar-fixed-top {
+    padding-top: 39px;
+}
+
+.spread table thead tr td {
+    position: sticky;
+    top: 0;
+}
+
+.spread a {
+    text-decoration: none !important;
+}
+
+.searchterm {
+    color: tomato;
+}
+
+.form-group {
+    margin-bottom: 0rem;
+}
+
+/********/
+
+.footer {
+    background-color: #D4D0C8;
+    _height: 30px;
+    _min-height: 32px;
+    vertical-align: middle;
+}
+
+.MultipleselectInline {
+    max-height: 200px;
+    overflow: auto;
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+    .jumbotron {
+        margin-top: 20px;
+    }
+
+    .body-content {
+        padding: 0;
+    }
+}
+
+
+.Filters {
+    font-size: .75em;
+}
+
+    .Filters .filter {
+        font-size: 1em;
+    }
+
+        .Filters .filter input {
+            width: 14px;
+            margin: 0px 4px 0px 0px !important;
+        }

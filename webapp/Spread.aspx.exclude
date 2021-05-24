@@ -1,0 +1,118 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Spread.aspx.cs"  Inherits="Spread" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <script>
+
+        //var PickerLinkDefaults = '{}';
+        var SpreadInitialized = false;
+        var PickerLinkDefaults = [];
+        var SpreadColumns;
+
+    </script>
+
+    
+
+    <style>
+        <%=Session["TableClass"].ToString() %>
+    
+        .spread table thead tr td{
+            position:sticky;
+            top: 0;
+        }
+
+        .spread a {
+            text-decoration: none !important;
+        }
+
+   </style>
+
+</head>
+<body>
+    
+    <form id="form1" runat="server">
+        <div>
+
+            
+            <hs:HSpread
+                    ID ="SpreadGrid"
+                    runat="server" 
+                    cssClass ="table tabledetail table-hover scrollable fixedheader js-dynamitable hg griddialog table-striped"
+                    Title ="Picker"
+                    Labels =""                    
+                    ColumnStyle = ""
+                    Widths = "default"
+                    DeleteColumn = "true"
+                    NewRecords ="50"
+                    Hide =""
+                />
+            
+            <asp:HiddenField runat="server" ID="txContext" ClientIDMode="Static" />
+
+            <script>
+
+                
+
+                $(document).ready(function () {
+                    
+                    var SpreadID = $('.spread').attr('id');
+
+                    table = document.getElementById(SpreadID).jexcel;
+
+                    var columns = table.getConfig().columns;
+
+                    var required = columns.filter(function (e) { return e.required == true });
+
+                    $(required).each(function () {
+                        var ch = this.title;
+
+                        $('#' + SpreadID + ' thead tr td[title="' + ch + '"]').html(ch + '<font color="red">*</font>');
+                    });
+
+                    /*
+                    // set pickerlink as metadata
+                    $(columns).each(function (index) {
+                        if (this.pickerlink != null) {
+                            var Link = decodeURIComponent(unescape(this.pickerlink));
+                            Link = Link.replace('></a>', ' ><span style=\'color:#D3D3D3 !important;\'>None</span></a>');
+
+                            PickerLinkDefaults[index] = Link;
+                            //table.setMeta(index, 'link', Link);
+
+                            
+                            var rows = table.rows;
+                            $(rows).each(function (row) {
+                                var celladdress = String.fromCharCode(64 + index + 1) + (row + 1);
+                                //table.setMeta({ celladdress: { pickerlink: Link } });
+                                table.setMeta(celladdress, 'link', Link);
+                            });
+                            
+                            
+                        }
+                    });
+                    */
+
+                    
+                    table.updateSelectionFromCoords(1, 0, 1, 0);
+
+                    //WaitBox('Spreadsheet Loading', 'Please wait.', 'info');
+                    //WaitBoxClose();
+
+                    
+                    //clearInterval(SpreadInterval);
+                    //$('#spnSpreadStatus').html('Ready');
+
+
+                });
+                
+            </script>
+
+            
+
+        </div>
+    </form>
+</body>
+</html>

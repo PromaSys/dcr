@@ -1,0 +1,66 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "dcr", "http://localhost/dcr", "{96CD9CD5-959A-4957-B4FA-7729B2A492B9}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "false"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
+		ProjectReferences = ""
+		Debug.AspNetCompiler.VirtualPath = "/foundation"
+		Debug.AspNetCompiler.PhysicalPath = "webapp\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\foundation\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/foundation"
+		Release.AspNetCompiler.PhysicalPath = "webapp\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\foundation\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "webapp\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		asdas|Any CPU = asdas|Any CPU
+		asdas|x64 = asdas|x64
+		asdas|x86 = asdas|x86
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|Any CPU.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|Any CPU.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|x64.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|x64.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|x86.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.asdas|x86.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|x64.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Debug|x86.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x64.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x64.Build.0 = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x86.ActiveCfg = Debug|Any CPU
+		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x86.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC73641A-A264-4AF7-9F00-0D39795F700C}
+	EndGlobalSection
+EndGlobal

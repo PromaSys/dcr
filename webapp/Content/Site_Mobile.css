@@ -1,0 +1,32 @@
+﻿.LoginFormBox {
+    position: absolute;
+    top: 10%;
+    left: 2%;
+    width: 96%;
+    max-width: 500px;
+    max-height: 570px !important;
+    color: #000;
+    background-color: #ffffff;
+    padding: 25px;
+    margin-right: 2%;
+    opacity: 0.9;
+    border-radius: 10px;
+}
+.LoginLogo{
+    height: 60px !important;
+    padding:0px 0px 15px 15px;
+}
+.LeftTD{
+   display: none;
+}
+.hgeditformtable td{
+    
+    text-align: left;
+    display: block;
+    float: left;
+    width: 100%;
+}
+#selAnnouncements{
+    height:150px;
+    overflow-y:scroll;
+}

@@ -1,0 +1,448 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using WebApp.App_Code;
+using System.Data;
+using System.Text.RegularExpressions;
+
+namespace WebApp
+{
+    public partial class Spread : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+
+                if (Session["UserID"] == null)
+                {
+                    Response.Write("<script type='text/javascript' >window.open('logout.aspx','_top');</script >"); Response.End();
+                }
+
+                Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+                Response.Cache.SetValidUntilExpires(false);
+                Response.Cache.SetRevalidation(HttpCacheRevalidation.AllCaches);
+                Response.Cache.SetCacheability(HttpCacheability.NoCache);
+                Response.Cache.SetNoStore();
+
+                GlobalClass gc = new GlobalClass();
+                DataTable dt = new DataTable();
+                DataTableCollection dtc = null;
+
+                //Available Client Height
+                int AvailableClientHeight = gc.CookieIntValue(Request.Cookies["AvailableClientHeight"], 400);
+
+                string Context = gc.Req("c");
+                string DialogWidth = gc.Req("w");
+                string DialogHeight = gc.Req("h");
+                string DialogTitle = gc.Req("t");
+
+                string eid = gc.Req("eid");
+                string Query = gc.Req("pq");
+                string Info = gc.Req("info");
+
+                string cw = gc.Req("cw");
+
+                string Type = gc.Req("ty");
+
+                Session["SpreadForm"] = Context;
+                Session["SpreadType"] = Type;
+
+                string FormData = gc.Req("fd");
+
+                string SpreadDefaults = "";
+                string SpreadDefaultsFV = "";
+
+                char[] pipedelimiter = { '|' };
+                char[] commadelimiter = { ',' };
+
+                string SpreadContext = "";
+                string SpreadTable = "";
+                string SpreadKeyField = "";
+                string SpreadForeignKeys = "";
+
+                if (Info.Trim() != "")
+                {
+                    SpreadContext = Info.Split(commadelimiter)[0].Trim();
+                    SpreadTable = Info.Split(commadelimiter)[1].Trim();
+                    SpreadKeyField = Info.Split(commadelimiter)[2].Trim();
+
+                    if (Info.Split(commadelimiter).Length > 3)
+                    {
+                        for (int i = 3; i < Info.Split(commadelimiter).Length; i++)
+                        {
+                            SpreadForeignKeys += Info.Split(commadelimiter)[i].Trim() + ",";
+                        }
+                    }
+
+                    //SpreadGrid.Table = SpreadTable;
+                    //PickerGrid.KeyField = PickerKeyField;
+
+                }
+
+                string AddSQL = "";
+
+
+                if (FormData != "")
+                {
+                    //update form parameters
+                    string[] FD = FormData.Split(pipedelimiter);
+                    for (int i = 0; i < FD.Length; i = i + 3)
+                    {
+                        string Field = gc.TryDecrypt(FD[i]);
+                        string Value = Server.UrlDecode(gc.TryDecrypt(FD[i + 1]));
+                        string Label = Server.UrlDecode(FD[i + 2]);
+
+                        string DecryptedValue = Value;
+
+                        if (Value.IndexOf(",") > -1)
+                        {
+                            DecryptedValue = "";
+                            string[] Values = Value.Split(commadelimiter);
+                            for (int j = 0; j < Values.Length; j++)
+                            {
+
+                                DecryptedValue += gc.TryDecrypt(Values[j].Trim()) + ",";
+                            }
+                        }
+
+                        if (DecryptedValue == "")
+                        {
+                            Query = Regex.Replace(Query, "!= @" + Field, " not like '%' ", RegexOptions.IgnoreCase);
+                            Query = Regex.Replace(Query, "!=@" + Field, " not like '%' ", RegexOptions.IgnoreCase);
+
+                            Query = Regex.Replace(Query, "= @" + Field, " like '%' ", RegexOptions.IgnoreCase);
+                            Query = Regex.Replace(Query, "=@" + Field, " like '%' ", RegexOptions.IgnoreCase);
+
+                            Query = Regex.Replace(Query, "@" + Field, "undefined", RegexOptions.IgnoreCase);
+                        }
+                        else
+                        {
+                            if (DecryptedValue.EndsWith(","))
+                            {
+                                DecryptedValue = DecryptedValue.Substring(0, DecryptedValue.Length - 1);
+                            }
+
+                            Query = Regex.Replace(Query, "@\\b" + Field + "\\b", DecryptedValue, RegexOptions.IgnoreCase);
+                        }
+
+                        SpreadDefaults += Field + "|" + DecryptedValue + "|" + Label + "|";
+                        SpreadDefaultsFV += Field + "|" + DecryptedValue + "|";
+
+                        if (SpreadForeignKeys.IndexOf(Field, StringComparison.OrdinalIgnoreCase) > -1)
+                        {
+                            AddSQL += Field + "|" + DecryptedValue + "|";
+                        }
+                    }
+                }
+
+                if (SpreadDefaults != "")
+                {
+                    SpreadDefaults = SpreadDefaults.Substring(0, SpreadDefaults.Length - 1);
+                    SpreadDefaultsFV = SpreadDefaultsFV.Substring(0, SpreadDefaultsFV.Length - 1);
+                }
+
+                if (AddSQL != "")
+                {
+                    AddSQL = AddSQL.Substring(0, AddSQL.Length - 1);
+                }
+
+                Response.Cookies["SpreadDefaults"].Value = SpreadDefaults;
+                Response.Cookies["SpreadDefaults"].Expires = DateTime.Now.AddDays(1);
+                
+                SpreadGrid.Height = Convert.ToInt32(DialogHeight) - 130;
+                SpreadGrid.Width = Convert.ToInt32(DialogWidth);
+                SpreadGrid.EncryptionKey = Application["EncryptionKey"].ToString();
+
+                if (SpreadContext != "")
+                {
+                    SpreadGrid.Title = "Spread - " + SpreadContext; // + "|<div class=\"col-md-6 pull-right\"><div class=\"input-group pull-right\"><input type=\"text\" class=\"form-control pull-right SearchBox\" id=\"txtPickerSearch\" onkeypress=\"if(event.keyCode == 13){SearchPicker(this);}\" value=\"" + Search + "\" ><span class=\"input-group-addon\"><span onclick=\"SearchPicker(this);\" class=\"glyphicon glyphicon-search\" style=\"cursor: pointer;\" title=\"Search\"></span><span onclick=\"ResetSearchPicker(this.parentNode.parentNode.children[0]);\" class=\"glyphicon glyphicon-remove-circle\" style=\"cursor: pointer; margin-left: 10px;\" title=\"Reset search\" ></span></span><span class=\"input-group-addon\"><a class=\"pickeradd\" href=\"#\" onclick=\"PickerAdd(this, '" + Info + "'); return false;\" style=\"margin-top: 10px;\"> Add </a></span></div></div>&nbsp;&nbsp;";
+                }
+                else
+                {
+                    SpreadGrid.Title = "Spread"; //|<div class=\"col-md-6 pull-right\"><div class=\"input-group pull-right\"><input type=\"text\" class=\"form-control pull-right SearchBox\" id=\"txtPickerSearch\" onkeypress=\"if(event.keyCode == 13){SearchPicker(this);}\" value=\"" + Search + "\" ><span class=\"input-group-addon\"><span onclick=\"SearchPicker(this);\" class=\"glyphicon glyphicon-search\" style=\"cursor: pointer;\" title=\"Search\"></span><span onclick=\"ResetSearchPicker(this.parentNode.parentNode.children[0]);\" class=\"glyphicon glyphicon-remove-circle\" style=\"cursor: pointer; margin-left: 10px;\" title=\"Reset search\" ></span></span></div></div>&nbsp;&nbsp;";
+                }
+
+                string SpreadChoice = "";
+
+                if (Request.Cookies["SpreadChoice"] != null)
+                {
+                    if (Request.Cookies["SpreadChoice"].Value != "undefined")
+                    {
+                        SpreadChoice = Server.UrlDecode(Request.Cookies["SpreadChoice"].Value);
+
+                        string[] separatingChars = { ", " };
+                        string[] SpreadChoices = SpreadChoice.Split(separatingChars, System.StringSplitOptions.RemoveEmptyEntries);
+
+                        SpreadChoice = "";
+                        foreach (string Choice in SpreadChoices)
+                        {
+                            SpreadChoice += gc.TryDecrypt(Choice) + ", ";
+                        }
+
+                        if (SpreadChoice != "")
+                        {
+                            SpreadChoice = SpreadChoice.Substring(0, SpreadChoice.Length - 2);
+                        }
+                    }
+                }
+
+                string Where = "";
+
+                // get where
+                if (Query != "")
+                {
+                    if (Query.IndexOf("@") == -1)
+                    {
+                        int WherePosition = Query.IndexOf("Where", StringComparison.OrdinalIgnoreCase);
+                        if (WherePosition > -1)
+                        {
+                            Where = Query.Substring(WherePosition);
+                        }
+                    }
+                }
+
+                // get form 
+                dtc = gc.GetTables("exec app_sp_fields_form " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + SpreadContext + "','" + SpreadTable + "','" + SpreadKeyField + "','','All','" + Where + "'");
+
+                Session["TableClass"] = "";
+                
+                if (cw == "")
+                {
+                    cw = "100";
+                }
+
+                int CW = Convert.ToInt32(cw);
+
+                int TableWidth = dtc[2].Columns.Count * CW;
+
+                if (TableWidth > SpreadGrid.Width.Value)
+                {
+                    //Session["TableClass"] += ".jexcel col{width: 200px !important; }";
+                    Session["TableClass"] += ".jexcel {font-size: " + (SpreadGrid.Width.Value/ TableWidth) * 1.0  + "em;}";
+                }
+
+                string PickerWidths = dtc[1].Rows[0]["PickerDetailWidth"].ToString();
+
+                string Defaults = dtc[1].Rows[0]["Defaults"].ToString();
+
+                string DoNotEdit = "";
+                string Hide = SpreadGrid.Hide + "|";
+                //string Widths = "";
+                string Fields = "";
+                foreach (DataColumn c in dtc[2].Columns)
+                {
+                    if (c.ColumnName.IndexOf("_<b>") == 0)
+                    {
+                        DoNotEdit += c.ColumnName + "|";
+                        Hide += c.ColumnName + "|";
+                    }
+                    else
+                    {
+                        Fields += c.ColumnName + "|";
+                        //Widths += c.ColumnName + "|25%|";
+                    }
+                }
+
+                string DropDowns = dtc[1].Rows[0]["DropDowns"].ToString();
+
+                // app specific
+                // replace parameters
+                //DropDowns = DropDowns.Replace("@SiteID", Session["SiteID"].ToString());
+
+                string Templates = "";
+
+                if (DropDowns != "" && DropDowns != "|")
+                {
+                    string[] TemplateData = DropDowns.Split(pipedelimiter);
+
+                    for (int i = 0; i < TemplateData.Length; i = i + 2)
+                    {
+                        Templates += TemplateData[i] + "|spreaddropdown" + gc.GetSpreadDropDown("sel" + TemplateData[i], true, gc.GetTable(gc.SetDefaults(TemplateData[i + 1], SpreadDefaults))).Replace("|", ",") + "|";
+                    }
+                }
+
+                string DropDownsMultiple = dtc[1].Rows[0]["DropDownsMultiple"].ToString();
+
+                if (DropDownsMultiple != "" && DropDownsMultiple != "|")
+                {
+                    string[] TemplateDataMultiple = DropDownsMultiple.Split(pipedelimiter);
+
+                    for (int i = 0; i < TemplateDataMultiple.Length; i = i + 2)
+                    {
+                        Templates += TemplateDataMultiple[i] + "|multiplespreaddropdown" + gc.GetSpreadDropDown("sel" + TemplateDataMultiple[i], true, gc.GetTable(gc.SetDefaults(TemplateDataMultiple[i + 1], SpreadDefaults))).Replace("|", ",") + "|";
+                    }
+                }
+
+                string Pickers = dtc[1].Rows[0]["Pickers"].ToString();
+
+                if (Pickers != "" && Pickers != "|")
+                {
+                    string[] TemplateData = Pickers.Split(pipedelimiter);
+
+                    for (int i = 0; i < TemplateData.Length; i = i + 3)
+                    {
+                        string FieldKey = "";
+                        if (dtc[2].Rows.Count > 0)
+                        {
+                            FieldKey = dtc[2].Rows[0][TemplateData[i]].ToString();
+                        }
+
+                        string PickerWidth = gc.GetPairValue(PickerWidths, TemplateData[i], "");
+
+                        string Template = "<a id=\"" + "pick" + TemplateData[i] + "\" href=\"#\" onfocus=\"PickerFocus(this);\" onkeypress=\"PickerKeyPress(this, event);\" onclick=\"PopPicker(this);\" f=\"" + Context + "\" q=\"" + gc.Encrypt(TemplateData[i + 1]) + "\" template=\"picker\" info=\"" + gc.Encrypt(TemplateData[i + 2]) + "\" cs=\"" + gc.Encrypt(GlobalClass.ConnectionString) + "\" w=\"" + PickerWidth + "\" ></a>";
+
+                        //Templates += TemplateData[i] + "|" + gc.GetPicker("pick" + TemplateData[i], TemplateData[i + 1], TemplateData[i + 2], FieldKey, Fields, Context).Replace("|", ",") + "|";
+                        Templates += TemplateData[i] + "|" + Template.Replace("|", ",") + "|";
+                    }
+                }
+
+                string PickersMultiple = dtc[1].Rows[0]["PickersMultiple"].ToString();
+
+                if (PickersMultiple != "" && PickersMultiple != "|")
+                {
+                    string[] TemplateDataMultiple = PickersMultiple.Split(pipedelimiter);
+
+                    for (int i = 0; i < TemplateDataMultiple.Length; i = i + 3)
+                    {
+                        string FieldKey = "";
+                        if (dtc[2].Rows.Count > 0)
+                        {
+                            FieldKey = dtc[2].Rows[0][TemplateDataMultiple[i]].ToString();
+                        }
+
+                        string PickerWidth = gc.GetPairValue(PickerWidths, TemplateDataMultiple[i], "");
+
+                        string Template = "<a id=\"" + "pick" + TemplateDataMultiple[i] + "\" href=\"#\" onfocus=\"PickerFocus(this);\" onkeypress=\"PickerKeyPress(this, event);\" onclick=\"PopPicker(this);\" f=\"" + Context + "\" q=\"" + gc.Encrypt(TemplateDataMultiple[i + 1]) + "\" template=\"multiplepicker\" info=\"" + gc.Encrypt(TemplateDataMultiple[i + 2]) + "\" cs=\"" + gc.Encrypt(GlobalClass.ConnectionString) + "\"  w=\"" + PickerWidth + "\" ></a>";
+                        //string Template = "<a id=\"" + "pick" + TemplateDataMultiple[i] + "\" href=\"#\" onfocus=\"PickerFocus(this);\" onkeypress=\"PickerKeyPress(this, event);\" onclick=\"PopPicker(this);\" f=\"" + Context + "\" q=\"" + gc.Encrypt(TemplateDataMultiple[i + 1]) + "\" template=\"multiplepicker\" info=\"" + gc.Encrypt(TemplateDataMultiple[i + 2]) + "\" pairs=\"" + gc.GetValueLabelPairs(TemplateDataMultiple[i + 1]) + "\"  ></a>";
+                        //Templates += TemplateDataMultiple[i] + "|" + gc.GetMultiplePicker("pick" + TemplateDataMultiple[i], TemplateDataMultiple[i + 1], TemplateDataMultiple[i + 2], FieldKey, Fields, Context).Replace("|", ",") + "|";
+                        Templates += TemplateDataMultiple[i] + "|" + Template.Replace("|", ",") + "|";
+                    }
+                }
+
+                string Detail = dtc[1].Rows[0]["Detail"].ToString();
+
+                if (Detail != "" && Detail != "|")
+                {
+                    string[] TemplateDetail = Detail.Split(pipedelimiter);
+
+                    for (int i = 0; i < TemplateDetail.Length; i = i + 3)
+                    {
+                        string FieldKey = "";
+                        if (dtc[2].Rows.Count > 0)
+                        {
+                            FieldKey = dtc[2].Rows[0][TemplateDetail[i]].ToString();
+                        }
+
+                        Templates += TemplateDetail[i] + "|" + gc.GetDetail("det" + TemplateDetail[i], TemplateDetail[i + 1], TemplateDetail[i + 2], FieldKey, Fields, Defaults, Context).Replace("|", ",") + "|";
+                    }
+                }
+
+                if (Templates != "")
+                {
+                    Templates = Templates.Substring(0, Templates.Length - 1);
+                }
+
+                string Required = dtc[1].Rows[0]["Required"].ToString();
+                DoNotEdit += dtc[1].Rows[0]["ReadOnly"].ToString();
+
+                //string Defaults = dtc[1].Rows[0]["Defaults"].ToString();
+                if (Defaults != "")
+                {
+                    char[] sep = new char[] { '|' };
+                    string[] DefaultArray = Defaults.Split(sep);
+                    Defaults = "";
+                    for (int i = 0; i < DefaultArray.Length; i = i + 2)
+                    {
+                        try
+                        {
+                            string DefaultValue = DefaultArray[i + 1];
+
+                            if (DefaultValue.IndexOf('@')> -1)
+                            {
+                                DefaultValue = gc.ApplyQueryDefaults(DefaultValue, SpreadDefaultsFV + "|" + Defaults);
+                                DefaultValue = gc.CleanQuery(DefaultValue);
+                            }
+                            
+                            Defaults += DefaultArray[i] + "|" + gc.GetTable("select " + DefaultValue + " as rv").Rows[0]["rv"].ToString() + "|";
+                        }
+                        catch (Exception ex)
+                        {
+                            Defaults += "";
+                        }
+                    }
+
+                    if (Defaults != "")
+                    {
+                        Defaults = Defaults.Substring(0, Defaults.Length - 1);
+                    }
+                }
+
+
+                // body
+                SpreadGrid.ID = Context;
+                SpreadGrid.Height = Convert.ToInt32(DialogHeight) - 150; // AvailableClientHeight;
+                SpreadGrid.Title = ""; // Topic;
+                SpreadGrid.EncryptionKey = Application["EncryptionKey"].ToString();                
+                SpreadGrid.GridTable = dtc[2];
+                SpreadGrid.Calendars = dtc[1].Rows[0]["Calendars"].ToString();
+                //SpreadGrid.Formats = (SpreadGrid.Calendars + '|').Replace("|", "|MM/dd/yyyy|");
+                SpreadGrid.Labels = dtc[1].Rows[0]["Labels"].ToString();
+                SpreadGrid.DoNotEdit = DoNotEdit;
+                SpreadGrid.Templates = Templates;
+                SpreadGrid.TextAreas = dtc[1].Rows[0]["TextAreas"].ToString();
+                SpreadGrid.Chat = dtc[1].Rows[0]["Chats"].ToString();
+                SpreadGrid.Docs = dtc[1].Rows[0]["Docs"].ToString();
+                SpreadGrid.Required = Required;
+                SpreadGrid.Defaults = Defaults;
+                SpreadGrid.Formats = dtc[1].Rows[0]["Format"].ToString() + (SpreadGrid.Calendars + '|').Replace("|", "|MM/dd/yyyy|");
+                SpreadGrid.NumberFormat = dtc[1].Rows[0]["NumberFormat"].ToString();
+                SpreadGrid.Blocked = dtc[1].Rows[0]["Summary"].ToString();
+                SpreadGrid.Links = dtc[1].Rows[0]["Links"].ToString();
+                SpreadGrid.Ignore = dtc[1].Rows[0]["Ignore"].ToString();
+                SpreadGrid.ColumnStyle = dtc[1].Rows[0]["Style"].ToString();
+                SpreadGrid.Hide = Hide;
+                //SpreadGrid.Rea
+                //SpreadGrid.Widths = Widths;
+                //Body.Defaults = "Liability_Limit|" + String.Format("{0:#}", dtc[8].Rows[0]["Liability"]) + "|WC_Limit|" + String.Format("{0:#}", dtc[8].Rows[0]["Workers_Compensation"]) + "|Endorsement|" + dtc[8].Rows[0]["Endorsement"].ToString().Replace("<br>", " &#13;&#10;");
+
+                //SpreadGrid.Widths = "Clone|3%";
+
+
+                SpreadGrid.Table = SpreadTable;
+                SpreadGrid.KeyField = SpreadKeyField;
+
+                //SpreadGrid.AddSQL = AddSQL;
+                if (AddSQL == "")
+                {
+                    SpreadGrid.AddSQL = gc.TraceSQLArtemis();
+                }
+                else
+                {
+
+                    // ignore all fields in AddSQL
+                    SpreadGrid.Hide += "|" + AddSQL;
+                    //SpreadGrid.Hide = "ConfirmID";
+                    /*
+                    if (Context == "SpreadOrder_Entry")
+                    {
+                        //SpreadGrid.Hide += "|ConfirmID|ContractProductID";
+                        SpreadGrid.Hide += "|ConfirmID";
+                    }
+                    */
+
+                    SpreadGrid.AddSQL = AddSQL + "|" + gc.TraceSQLArtemis(); // gc.TraceSQL();
+                }                
+
+                Response.Cookies["PickerSpreadWidthSpread"].Value = dtc[1].Rows[0]["PickerDetailWidth"].ToString();
+                Response.Cookies["PickerSpreadWidthSpread"].Expires = DateTime.Now.AddDays(1);
+
+                dtc = null;
+                gc = null;
+            }
+        }
+    }
+}

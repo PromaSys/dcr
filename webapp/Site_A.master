@@ -1,0 +1,97 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site_A.master.cs" Inherits="Site_A" %>
+
+<!DOCTYPE html>
+
+<html>
+
+<head runat="server">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+        <%: Styles.Render("~/Content/css") %>
+        <%: Scripts.Render("~/Scripts/js") %>
+    </asp:PlaceHolder>
+
+    <style> 
+        <%=Application["Theme"].ToString() %>
+    </style>
+
+</head>
+<body style="margin-top: 50px;">
+    <form id="form1" runat="server">
+    
+     
+    <div class="navbar navbar-default navbar-fixed-top" style="_background-color: whitesmoke;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand"  href="<%= Application["ApplicationAddress"].ToString() %>" target="_blank" title="Navigate to <%= Application["ApplicationName"].ToString() %>"><img src="<%= ResolveUrl("~/images/" + Application["ApplicationMenuLogo"].ToString()) %>" style="margin-top: -4px; margin-right:30px; height: 32px; "/></a>
+            </div>
+                
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    
+                    
+                    
+                    <%if (Session["UserMenu"].ToString() != "")
+                        { %>
+                        <%=Session["UserMenu"].ToString() %>
+                    <%}
+                    else
+                    { %>
+                        <li><a runat="server" href="~/account/login">LOGIN</a></li>
+                        <li><a runat="server" href="#" onclick="MessageBox('About','MAI Testing App<br />© copyright 2020 McCampbell Analytical, Inc<br />1534 Willow Pass Rd, Pittsburg, CA 94565', 300);">ABOUT</a></li>
+                    </ul>
+                    <%} %>
+                <%/* %>
+                    <ul class="nav navbar-nav navbar-right">    
+                        <li>
+                            <div style="padding-top: 4px; padding-right: 20px; padding-left: 12px;">  
+                               <div id="google_translate_element" ></div>  
+                               <script type="text/javascript">  
+                                   function googleTranslateElementInit() {
+                                       new google.translate.TranslateElement
+                                           ({
+                                               pageLanguage: 'en' //,
+                                               //includedLanguages: 'ar,zh,fr,es,hi,ja,ko,lo,fa',
+                                               //layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                                           },
+                                               'google_translate_element');
+                                   }
+                               </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">  
+                            </script>  
+                            </div>  
+                        </li>
+                </ul>
+                <%*/ %>
+            </div>
+        </div>
+    </div>
+    
+
+     <!--
+    <div style="float:right; display: inline;">
+        <a class="navbar-brand"  href="<%= Application["ApplicationAddress"].ToString() %>" target="_blank" title="Navigate to <%= Application["ApplicationName"].ToString() %>"><img src="<%= ResolveUrl("~/images/" + Application["ApplicationMenuLogo"].ToString()) %>" style="margin-top: -4px; margin-right:30px; height: 32px;"/></a>
+        <a href="#">Login</a>
+    </div>
+    -->
+    <div class="container-fluid body-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        <!--
+            <footer class="navbar navbar-fixed-bottom text-center footer">
+                   <p class="text-muted" style="margin-top: 15px;">&copy; <%: DateTime.Now.Year %> - MAI Testing</p>
+            </footer>
+        -->
+        </div>
+    </form>
+</body>
+</html>

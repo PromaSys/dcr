@@ -1,0 +1,41 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - Web App</title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+        <%: Styles.Render("~/Content/css") %>
+        <%: Scripts.Render("~/Scripts/js") %>
+    </asp:PlaceHolder>
+
+     <style> 
+        <%=Application["Theme"].ToString() %>
+    </style>
+
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--
+    <link href="Content/navbar_primary.css" rel="stylesheet" />
+    -->
+
+</head>
+<body style="padding-top: 0px;">
+    <form runat="server">      
+        
+        
+        <div class="container-fluid body-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+
+
+
+</body>
+</html>

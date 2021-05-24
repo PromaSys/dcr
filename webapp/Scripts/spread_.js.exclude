@@ -1,0 +1,635 @@
+﻿var calendaroptions = {
+    // Date format
+    format: 'MM/DD/YYYY',
+    // Allow keyboard date entry
+    readonly: 0,
+    // Today is default
+    today: 0,
+    // Show timepicker
+    time: 0,
+    // Show the reset button
+    resetButton: true,
+    // Placeholder
+    placeholder: 'xxx',
+    // Translations can be done here
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    weekdays_short: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+    // Value
+    value: null,
+    // Events
+    onclose: null,
+    onchange: null,
+    // Fullscreen (this is automatic set for screensize < 800)
+    fullscreen: false
+};
+
+var jquerydatepicker = {
+    // Methods
+    closeEditor: function (cell, save) {
+
+        var value = cell.children[0].value;
+        cell.innerHTML = value;
+        return value;
+    },
+    openEditor: function (cell) {
+        // Create input
+        var element = document.createElement('input');
+        element.value = cell.innerHTML;
+        element.setAttribute('class', 'datepicker');
+
+        // Update cell
+        cell.classList.add('editor');
+        cell.innerHTML = '';
+        cell.appendChild(element);
+
+        /*
+        $(element).datepicker({
+            dateFormat: 'm/d/yyyy',
+            autoclose: true,
+            width: 300,
+            onSelect: function (t, e) {
+                this.value = t;
+                setTimeout(function () {
+
+                    // To avoid double call
+                    if (cell.children[0]) {
+                        table.closeEditor(cell, true);
+                    }
+                });
+            }
+        });
+        */
+        // Focus on the element
+        element.focus();
+    },
+    getValue: function (cell) {
+        return cell.innerHTML;
+    },
+    setValue: function (cell, value) {
+        cell.innerHTML = value;
+    }
+}
+
+var noEditor = {
+    closeEditor: function (cell, save) { return; },
+    openEditor: function (cell) { return; },
+    getValue: function (cell) {
+        return $(cell).html();
+    },
+    setValue: function (cell, value) {
+        $(cell).html(value);
+        $(cell).css('color', value);
+        return true;
+    }
+}
+
+
+
+function ValidateSpread(o) {
+    
+    var spreadid = o.spreadid;
+    var pickerelement = o.pickerelement;
+    var onvalid = o.onvalid;
+    var oninvalid = o.oninvalid;
+
+    var spread = document.getElementById(spreadid).jexcel;
+
+    var columns = spread.getConfig().columns;
+
+    var tb = document.getElementById(spreadid).getAttribute('tb');
+    var kf = document.getElementById(spreadid).getAttribute('kf');
+    var as = document.getElementById(spreadid).getAttribute('as');
+
+    var kfindex = GetKeyColumnIndex(columns);
+
+    // validate
+    var NewData = table.getData();
+    var Changes = '';
+    var valid = true;
+
+    // run pre validate function
+    if (typeof (ValidateSpreadPre) == 'function') {
+        ValidateSpreadPre(o);
+    }
+
+    $(NewData).each(function (index) {
+
+        var rowindex = index;
+        var rowdata = this;
+        var Change = '';
+        valid = true;
+
+        var hasdata = true;
+
+        if (rowdata.join('').replace('false', '') == '') {
+            hasdata = false;
+        }
+
+        if (hasdata) {
+
+            var ID = rowdata[kfindex];
+
+            // get old data row
+            oldrowdata = OldData.filter(function (e) { return e[0] == ID })[0];
+            //debugger;
+            $(columns).each(function (index) {
+
+                var cellname;
+                
+                if (this.type != 'hidden') {
+
+                    cellname = String.fromCharCode(index + 65) + (rowindex + 1);
+                    table.setStyle(cellname, 'background-color', 'white');
+                }
+
+                //var value = rowdata[index];
+                var value = spread.getValueFromCoords(index, rowindex);
+
+                // required
+                if (this.required == true && value == '') {
+
+                    table.setStyle(cellname, 'background-color', 'yellow');
+                    // message
+                    MessageBox("Validation: Required Field Empty", "You missed making an entry to a required field (" + this.title + ").<br /><br />Please make an entry.", "warning");
+
+                    valid = false;
+                    return valid;
+                }
+
+                // length
+                if (this.length != null && value.length > this.length) {
+                    table.setStyle(cellname, 'background-color', 'yellow');
+                    MessageBox("Validation: Text Too Long", "The text you entered is longer than the maximum length allowed (" + this.length + " characters).<br /><br />Please edit.", "warning");
+                    valid = false;
+                    return valid;
+                }
+
+                // is date
+                if (this.date == true && value != '' && isNaN(Date.parse(value))) {
+                    table.setStyle(cellname, 'background-color', 'yellow');
+                    MessageBox("Validation: Not a Date", "The text you entered is not a date. A date is expected.<br /><br />Please edit.", "warning");
+
+                    valid = false;
+                    return valid;
+                }
+
+                // is number
+                if (this.ft == true && !$.isNumeric(value) && this.type == 'text') {
+                    table.setStyle(cellname, 'background-color', 'yellow');
+                    MessageBox("Validation: Not a Number", "The text you entered is not a number. A number is expected.<br /><br />Please edit.", "warning");
+
+                    valid = false;
+                    return valid;
+                }
+
+                var oldvalue = oldrowdata[index];
+
+                var savevalue = SaveValue(value, this);
+
+                if (savevalue != SaveValue(oldvalue, this)) {                  
+                    Change += "<fv f='" + this.fn + "'  v='" + savevalue + "' t='" + this.ft + "' e='1' />";
+                }
+            });
+
+            if (!valid) {
+                return valid;
+            }
+        }
+
+        if (!valid) {
+            return valid;
+        }
+
+        if (Change != '') {
+            Changes += "<data tb='" + tb + "' kf='" + kf + "' kfv='" + ID + "' as='" + escape(as) + "' >" + Change + "</data>";
+        }
+
+    });
+
+    if (valid) {
+        onvalid(Changes);
+    }
+    else {
+        oninvalid();
+    }
+
+    return;
+}
+
+function SaveSpread(SpreadID, PickerElement, changes) {
+
+    WaitBox('Saving Data', 'Please wait.', 'info');
+
+    var spread = document.getElementById(SpreadID).jexcel;
+    var columns = spread.getConfig().columns;
+    var keyfieldindex = GetKeyColumnIndex(columns);
+    var PickerCurrentIDs = '';
+    var PickerForm = $(PickerElement).attr('f');
+    var PickerField = $(PickerElement).attr('fn');
+    var SavedRows = 0;
+
+    //Encode
+    changes = changes.replace(/\</g, "-[_").replace(/\>/g, "_]-");
+
+    // save
+    $.ajax({
+        type: 'GET',
+        url: 'Process_Change.aspx',
+        async: false,
+        processData: false,
+        data: changes,
+        success: function (r) {
+
+            // parse response
+            var Result = r.split("|");
+
+            if (Result[0] == 'Error') {
+                WaitBoxClose();
+                MessageBox("Error Saving Data", r.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
+                return;
+            }
+
+            var FieldForm = $(PickerElement).closest('.vg, .hg');
+
+            var kf = FieldForm.attr('kf');
+            var kfv = FieldForm.attr('kfv');
+            var tb = FieldForm.attr('tb');
+
+            // spread update
+            var jqxhr = $.getJSON("Process_Request.aspx", {
+                action: "PickerLink",
+                cids: PickerCurrentIDs,
+                nid: '',
+                form: PickerForm,
+                field: PickerField,
+                ls: 'PC',
+                kf: kf,
+                kfv: kfv,
+                table: tb
+            })
+                .done(function (data) {
+
+                    $(PickerElement).attr('resultkey', data.LinkIDs);
+                    $(PickerElement).text(data.LinkText);
+
+                    $('#diaSpread' + PickerForm).dialog('destroy').remove();
+
+                    // focus on next fields
+                    if (f.indexOf('Product_Designer_') == -1) {
+
+                        //var nr = $(e).closest('tr').next('tr').find('.hgResult');
+                        var nr = $(PickerElement).closest('tr').nextAll('tr:visible:first').find('.hgResult');
+
+                        if (nr.find('input').length == 1) {
+                            nr.find('input').caretToEnd();
+                        }
+                        else if (nr.is('a')) {
+                            //nr.focus();
+                            //setTimeout(function () { nr.click(); }, 500);
+                            setTimeout(function () {
+                                nr.focus();
+
+                                if (nr.text() == 'None') {
+                                    nr.click();
+                                }
+                            },
+                                500);
+                        }
+                        else {
+                            nr.focus();
+                        }
+                    }
+
+                    WaitBoxClose();
+
+                    //alert("done");
+                }).fail(function (data) {
+                    WaitBoxClose();
+                    alert("PickerLink failed.");
+                });
+            
+        },
+        error: function (response) {
+            WaitBoxClose();
+            MessageBox("Error Saving Data", "Please edit or cancel.", "danger");
+            return;
+        }
+    });
+
+
+    return;
+
+    // process one row at a time?
+    var rowschanges = changes.split('</data>').filter(function (e) { return e != '';});
+
+    for (var rowindex = 0; rowindex < rowschanges.length; rowindex++) {
+        var rowchanges = rowschanges[rowindex];
+        if (rowchanges != '') {
+
+            rowchanges += '</data>';
+
+            //Encode
+            rowchanges = rowchanges.replace(/\</g, "-[_").replace(/\>/g, "_]-");
+
+            // save
+            $.ajax({
+                type: 'GET',
+                url: 'Process_Change.aspx',
+                async: false,
+                processData: false,
+                data: rowchanges,
+                success: function (r) {
+                    
+                    // parse response
+                    var Result = r.split("|");
+
+                    // update spread with new id if returned
+                    if (Result[0] == 'NewID') {
+                        //spread.data[rowindex][keyfieldindex] = Result[1];
+                        spread.setValueFromCoords(keyfieldindex, rowindex, Result[1]);
+                    }
+
+                    if (Result[0] == 'Error') {
+                        WaitBoxClose();
+                        MessageBox("Error Saving Data", r.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
+                        return;
+                    }
+
+                    //PickerCurrentIDs += spread.getValueFromCoords(keyfieldindex, rowindex) + ', ';
+
+                    SavedRows += 1;
+
+                    if (SavedRows == rowschanges.length) {
+
+                        /*
+                        if (PickerCurrentIDs != '') {
+                            PickerCurrentIDs = PickerCurrentIDs.substr(0, PickerCurrentIDs.length - 2);
+                        }
+                        */
+                        
+                        PickerCurrentIDs = spread.getColumnData(keyfieldindex).filter(function (e) { return e != ''; }).join(',');
+                        
+                        var FieldForm = $(PickerElement).closest('.vg, .hg');
+
+                        var kf = FieldForm.attr('kf');
+                        var kfv = FieldForm.attr('kfv');
+                        var tb = FieldForm.attr('tb');
+
+                        // spread update
+                        var jqxhr = $.getJSON("Process_Request.aspx", {
+                            action: "PickerLink",
+                            cids: PickerCurrentIDs,
+                            nid: '',
+                            form: PickerForm,
+                            field: PickerField,
+                            kf: kf,
+                            kfv: kfv,
+                            table: tb
+                        })
+                            .done(function (data) {
+
+                                $(PickerElement).attr('resultkey', data.LinkIDs);
+                                $(PickerElement).text(data.LinkText);
+
+                                $('#diaSpread' + PickerForm).dialog('destroy').remove();
+
+                                // focus on next fields
+                                if (f.indexOf('Product_Designer_') == -1) {
+
+                                    //var nr = $(e).closest('tr').next('tr').find('.hgResult');
+                                    var nr = $(PickerElement).closest('tr').nextAll('tr:visible:first').find('.hgResult');
+
+                                    if (nr.find('input').length == 1) {
+                                        nr.find('input').caretToEnd();
+                                    }
+                                    else if (nr.is('a')) {
+                                        //nr.focus();
+                                        //setTimeout(function () { nr.click(); }, 500);
+                                        setTimeout(function () {
+                                            nr.focus();
+
+                                            if (nr.text() == 'None') {
+                                                nr.click();
+                                            }
+                                        },
+                                            500);
+                                    }
+                                    else {
+                                        nr.focus();
+                                    }
+                                }
+
+                                WaitBoxClose();
+
+                                //alert("done");
+                            }).fail(function (data) {
+                                WaitBoxClose();
+                                alert("PickerLink failed.");
+                            });
+                    }
+                },
+                error: function (response) {
+                    WaitBoxClose();
+                    MessageBox("Error Saving Data", "Please edit or cancel.", "danger");
+                    return;
+                }
+            });
+        }
+    }
+            
+}
+
+var spreadonselection = function (instance, x1, y1, x2, y2, origin) {
+    return;
+    var cellName = jexcel.getColumnNameFromId([x1, y1]);
+    var cell = table.getCell(cellName);
+}
+
+
+var spreadonload = function (instance) {
+    OldData = instance.jexcel.getData();
+}
+
+var spreadupdateTable = function(instance, cell, col, row, val, id) {
+    //debugger;
+    
+    if ((cell.innerText).indexOf("<a ") > -1) {
+        cell.innerHTML = val;
+    }
+   
+}
+
+
+var spreadonpaste = function(instance, cell) {
+    //debugger;
+    return;
+    for (var r = 0; r < cell.length; r++) {
+        for (var c = 0; c < cell[0].length; c++) {
+            var pastedcell = cell[r, c];
+            if ((pastedcell.innerText).indexOf("<a ") > -1) {
+                //pastedcell.innerHTML = val;
+            }
+        }
+    }    
+}
+
+
+var spreadonchange = function (instance, cell, x, y, value) {
+    //debugger;
+    if ((cell.innerText).indexOf("<a ") > -1) {
+        cell.innerHTML = value;
+    }    
+}
+
+var spreadoneditionstart = function (instance, cell, x, y, value) {    
+
+    if ((cell.innerHTML).indexOf("<a ") > -1) {
+
+        $(cell).addClass('readonly');
+
+    }/*
+    else if (table.getConfig().columns[x].date) {
+        setTimeout(function () {
+            
+            $(cell).closest('input').datepicker();
+            
+        }, 5000);
+    }*/
+    else {
+        return;
+    }  
+}
+
+
+var spreadoneditionend = function (instance, cell, x, y, value) {
+    //debugger;
+    if (table.getConfig().columns[x].date) {
+        // fix date
+        var date = new Date(cell.innerHTML);
+
+        if (date.getYear() < 100) {
+            var newdate = new Date(date.getYear() + 2000, date.getMonth(), date.getDate());
+            cell.innerHTML = formatDate(newdate, "MM/dd/yyyy");
+            data[y][x] = cell.innerHTML;
+        }
+    }
+}
+
+
+function ValidateSpreadPre(o) {
+
+    var spreadid = o.spreadid;
+
+    var spread = document.getElementById(spreadid).jexcel;
+
+    var columns = spread.getConfig().columns;
+
+    var tb = document.getElementById(spreadid).getAttribute('tb');
+    var kf = document.getElementById(spreadid).getAttribute('kf');
+    var as = document.getElementById(spreadid).getAttribute('as');
+
+    // validate
+    var NewData = table.getData();
+
+    if(spreadid == 'SpreadSalesForce'){
+
+        // update ignored fields
+
+        //Product
+        var ContractProductIDindex = GetColumnIndex(columns, 'Contract Product');
+        var ProductIDindex = GetColumnIndex(columns, 'Product');
+
+        // Dates
+        var DeliveryDateindex = GetColumnIndex(columns, 'Delivery Date');
+
+        var ContractDeliveryDeadlineindex = GetColumnIndex(columns, 'Contract Deadline');
+        var EarliestPossibleDeliveryDateindex = GetColumnIndex(columns, 'Earliest Possible Delivery');
+
+        $(NewData).each(function (index) {
+
+            var rowindex = index;
+            var rowdata = this;
+            var Change = '';
+            valid = true;
+
+            var hasdata = true;
+
+            if (rowdata.join('').replace('false', '') == '') {
+                hasdata = false;
+            }
+
+            if (hasdata) {
+                
+                // update ProductID
+                data[index][ProductIDindex] = rowdata[ContractProductIDindex];
+                
+                // update ContractDeliveryDeadline
+                data[index][ContractDeliveryDeadlineindex] = rowdata[DeliveryDateindex];
+
+                // update EarliestPossibleDeliveryDate
+                data[index][EarliestPossibleDeliveryDateindex] = rowdata[DeliveryDateindex];
+                /*
+                // update ProductID
+                var targetcellname = String.fromCharCode(index + 65) + (ProductIDindex + 1);
+                spread.setValue(targetcellname, rowdata[ContractProductIDindex], true);
+
+                // update ContractDeliveryDeadline
+                var targetcellname = String.fromCharCode(index + 65) + (ContractDeliveryDeadlineindex + 1);
+                spread.setValue(targetcellname, rowdata[DeliveryDateindex], true);
+
+                // update EarliestPossibleDeliveryDate
+                var targetcellname = String.fromCharCode(index + 65) + (EarliestPossibleDeliveryDateindex + 1);
+                spread.setValue(targetcellname, rowdata[DeliveryDateindex], true);
+                */
+            }
+        });
+    }
+
+}
+
+function GetColumnIndex(columns, columntitle) {
+    //return columns.filter(function (e, index) { return e.title == title; }).index;
+    for (var i = 0; i < columns.length; i++) {
+        if (columns[i].title == columntitle) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function GetKeyColumnIndex(columns) {
+    //return columns.filter(function (e, index) { return e.title == title; }).index;
+    for (var i = 0; i < columns.length; i++) {
+        if (columns[i].key == true) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function SaveValue(value, column) {
+
+    if (value == true && column.type == 'checkbox') {
+        value = 1; // checkbox checked
+    }
+    else if (value == false && column.type == 'checkbox') {
+        value = 0; // checkbox unchecked
+    }
+    else if (value != '' && value.indexOf('<a ') > -1) {
+        // get result key
+        value = $(value).attr('resultkey');
+
+        if (value == '0') value = '';
+    }
+
+    return value;
+}
+
+function spreadonload() {
+    jSuites.loading.show();
+}
+
+function spreadonafterchanges() {
+    jSuites.loading.hide();
+}
