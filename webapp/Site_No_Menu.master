@@ -15,10 +15,13 @@
         <%: Scripts.Render("~/Scripts/js") %>
     </asp:PlaceHolder>
 
-     <style> 
-        <%=Application["Theme"].ToString() %>
-    </style>
-
+    <% if (Application["Theme"] != null)
+       {%>
+           <style>
+               <%=Application["Theme"].ToString() %>
+           </style>
+       <%}
+    %>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <!--
     <link href="Content/navbar_primary.css" rel="stylesheet" />

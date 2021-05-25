@@ -38,14 +38,19 @@
                         </td>
                     </tr>
                      <% if (!(bool)Application["ThemeIsSet"])
-                           {%>
-                    <tr>
-                        <td class="LeftMenuItem" onclick="LeftMenu('Theme');">
-                            Theme
-                        </td>
+                        {%>
+                            <tr>
+                                <td class="LeftMenuItem" onclick="LeftMenu('Theme');">
+                                    Theme
+                                </td>
+                            </tr>
                         <%}
-                       %>
-                    </tr>
+                     %>
+                     <tr>
+                        <td class="LeftMenuItem" onclick="LeftMenu('Subject Categories');">
+                            Subject Categories
+                        </td>
+                     </tr>
                     <!--
                     <tr>
                         <td class="LeftMenuItem" onclick="LeftMenu('Card Channel Compatibility');">

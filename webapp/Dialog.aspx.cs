@@ -87,8 +87,6 @@ public partial class Dialog : System.Web.UI.Page
                 
             }           
 
-            
-
             switch (Context)
             {
 
@@ -190,6 +188,36 @@ public partial class Dialog : System.Web.UI.Page
                     }
 
                     divChat.Height = Convert.ToInt32(DialogHeight) - 315;
+                    break;
+
+                case "Choose A Subject Category":
+
+                    //string Category_ID = gc.Req("Test_ID");
+
+                    //dtc = gc.GetTables("exec dcr_sp_get_subject_categories");
+                    //VGrid.GridTable = dtc[0];
+                    //VGrid.Table = "dcr_Subject_Categories";
+                    //VGrid.KeyField = "Category_ID";
+                    //VGrid.Edit = true;
+                    //VGrid.Labels = "";
+                    //VGrid.Formats = "";
+                    //VGrid.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
+                    //VGrid.Signatures = "Signature";
+                    //VGrid.AddSQL = gc.TraceSQL() + "|Test_ID|" + VTestID;
+
+
+                    dtc = dtc = gc.GetTables("exec dcr_sp_get_subject_categories " + Session["UserID"].ToString() + ", " + Session["UserGroupID"].ToString());
+                    VGrid.GridTable = dtc[0];
+                    VGrid.Table = "dcr_Subject_Categories";
+                    VGrid.KeyField = "Cat_ID";
+                    VGrid.Edit = true;
+                    VGrid.Labels = "";
+                    VGrid.Formats = "";
+                    VGrid.Templates = "Cat_ID|" + gc.GetSelect("selChoices", true, dtc[1]);
+                    VGrid.Title = "";
+                    VGrid.Calendars = "Date";
+                    VGrid.TextAreas = "";
+                    VGrid.Signatures = "Signature";
                     break;
             }
 

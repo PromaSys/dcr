@@ -119,7 +119,6 @@ public partial class Setup : System.Web.UI.Page
             Grid.Required = "Name|Template";
             Grid.Widths = "Name|10%|Template|80%|Active|10%";
             Grid.Edit = true;
-            //Grid.NewRecords = 5;
             Grid.KeyField = "Template_ID";
             Grid.Table = "app_Templates";
             Grid.TextAreas = "Template|30";
@@ -130,27 +129,36 @@ public partial class Setup : System.Web.UI.Page
         }
         else if (Session["SetupTopic"].ToString() == "Theme")
         {
-
             dtc = gc.GetTables("exec app_sp_setup_theme");
             Grid.GridTable = dtc[0];
             Grid.Title = "Themes|<a href='#' onclick='gridEditorFormNew({element: this, w: 500, h: 410});' class='btn btn-info'>New Theme</a>&nbsp;&nbsp;";
             Grid.Hide = "Stylesheet_ID";
             Grid.ColumnStyle = "Preview_theme|text-align:center;|Set_Theme|text-align: center;";
-
-            //Grid.Required = "Name|Template";
             Grid.Widths = "default";
             Grid.DoNotEdit = "Set_Theme|Preview_Theme";
             Grid.Edit = true;
-            //Grid.Blocked = "Set_Theme";
             Grid.Labels = "Stylesheet_Name|Theme";
             Grid.KeyField = "Stylesheet_ID";
             Grid.Table = "app_Css_Stylesheets";
             Grid.TextAreas = "Template|30";
             Grid.AddSQL = gc.TraceSQL();
-            //Grid.AsIs = "Set_Theme|Preview_Theme";
-            //Grid.NewRecords = 25;
-            //Grid.DeleteColumn = true;
+        }
 
+        else if (Session["SetupTopic"].ToString() == "Subject Categories")
+        {
+            dtc = gc.GetTables("exec dcr_sp_setup_subject_categories");
+            Grid.GridTable = dtc[0];
+            Grid.Table = "dcr_Subject_Categories";
+            Grid.KeyField = "Category_ID";
+            Grid.Title = "Subject Categories|<a href='#' onclick='gridEditorFormNew({element: this, w: 500, h: 410});' class='btn btn-info'>New Subject Category</a>&nbsp;&nbsp;";
+            Grid.Hide = "Category_ID";
+            Grid.ColumnStyle = "Active|text-align: center;";
+            Grid.Widths = "default";
+            //Grid.DoNotEdit = "Set_Theme|Preview_Theme";
+            Grid.Edit = true;
+            //Grid.Labels = "Stylesheet_Name|Theme";
+            //Grid.TextAreas = "Template|30";
+            Grid.AddSQL = gc.TraceSQL();
         }
 
         dtc = null;
