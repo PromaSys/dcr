@@ -20,7 +20,7 @@
                     <hg:HGrid
                         ID="hgTest"
                         runat="server"
-                        Edit = "false"
+                        Edit = "true"
                         cssClass ="table table-hover scrollable fixedheader js-dynamitable hg"
                         Title ="Test|<a href='#' onclick='eligibilityImports(this);' class='btn btn-info'>Eligibility Imports</a>&nbsp;&nbsp;<a href='#' onclick='gridEditorFormNew({element: this, w:400, h:600});' class='btn btn-primary'>New Item</a>"
                         KeyField ="Test_ID"
