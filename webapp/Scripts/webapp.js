@@ -1,12 +1,23 @@
 ﻿function createNewSubject() {
 
-    //gridPop({context: 'VTest', type: 'vertical', title: 'Test Vertical', w: 400, h: 600, data: {Test_ID: 1}})
+    let saveFunction = function () {
+        let categoryId = $('#selChoices').val();
+        $('#dia' + 'ChooseASubjectCategory').dialog('destroy').remove();
+        gridPop({
+            type: 'vertical',
+            context: 'CreateASubject',
+            title: 'Create A Subject',
+            w: RelativePixels('w', .6, 500),
+            h: RelativePixels('h', .7, 400),
+        })
+    } 
+
     gridPop({
         type: 'vertical',
-        context: 'Choose A Subject Category',
+        context: 'ChooseASubjectCategory',
         title: 'Please Choose a Subject Category',
         w: RelativePixels('w', .6, 500),
-        h: RelativePixels('h', .6, 400),
-        //data: { Test_ID: 1 }
+        h: RelativePixels('h', .3, 400),
+        saveFunction: saveFunction
     })
 }

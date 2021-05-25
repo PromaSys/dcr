@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
@@ -7,7 +6,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "dcr", "http://localhost/dcr
 	ProjectSection(WebsiteProperties) = preProject
 		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
-		ProjectReferences = ""
+		ProjectReferences = "{f323a654-44ae-4ea9-b56d-8f709ed832e5}|VGrid.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/foundation"
 		Debug.AspNetCompiler.PhysicalPath = "webapp\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\foundation\"
@@ -24,6 +23,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "dcr", "http://localhost/dcr
 		Release.AspNetCompiler.Debug = "False"
 		SlnRelativePath = "webapp\"
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VGrid", "..\Promasys_controls_2020\VGrid\VGrid.csproj", "{F323A654-44AE-4EA9-B56D-8F709ED832E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +57,24 @@ Global
 		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x64.Build.0 = Debug|Any CPU
 		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x86.ActiveCfg = Debug|Any CPU
 		{96CD9CD5-959A-4957-B4FA-7729B2A492B9}.Release|x86.Build.0 = Debug|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|Any CPU.ActiveCfg = asdas|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|Any CPU.Build.0 = asdas|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|x64.ActiveCfg = asdas|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|x64.Build.0 = asdas|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|x86.ActiveCfg = asdas|x86
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.asdas|x86.Build.0 = asdas|x86
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|x64.ActiveCfg = Debug|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|x64.Build.0 = Debug|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|x86.ActiveCfg = Debug|x86
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Debug|x86.Build.0 = Debug|x86
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|x64.ActiveCfg = Release|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|x64.Build.0 = Release|x64
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|x86.ActiveCfg = Release|x86
+		{F323A654-44AE-4EA9-B56D-8F709ED832E5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

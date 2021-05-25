@@ -19,7 +19,7 @@ public partial class Subjects : System.Web.UI.Page
 
         hgSubjects.Height = AvailableClientHeight;
         hgSubjects.GridTable = dtc[0];
-        hgSubjects.Templates = "Drop_Down_ID|" + gc.GetSelect("selChoices", true, dtc[1]) + "|Multiple_Choice_IDs|" + gc.GetMultipleSelect("selMultipleChoices", dtc[1], 1);
+        hgSubjects.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
 
         //hgTest.Filters = "Integer|Integer Filter|" + gc.GetSelect("selFilterInteger", false, dtc[2], 3, "123");
         litLeftMenu.Text = "";
