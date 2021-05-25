@@ -206,7 +206,7 @@ public partial class Dialog : System.Web.UI.Page
                     //VGrid.AddSQL = gc.TraceSQL() + "|Test_ID|" + VTestID;
 
 
-                    dtc = dtc = gc.GetTables("exec dcr_sp_get_subject_categories " + Session["UserID"].ToString() + ", " + Session["UserGroupID"].ToString());
+                    dtc = gc.GetTables("exec dcr_sp_get_subject_categories " + Session["UserID"].ToString() + ", " + Session["UserGroupID"].ToString());
                     VGrid.GridTable = dtc[0];
                     VGrid.Table = "dcr_Subject_Categories";
                     VGrid.KeyField = "Cat_ID";
