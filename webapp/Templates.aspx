@@ -19,8 +19,8 @@
             <td class="RightTD">
                     <hg:HGrid
                         ID="hgTemplates"
-                        Table ="dcr_Form_Template_Categories"
-                        KeyField ="Template_Category_ID"
+                        Table ="dcr_Form_Templates"
+                        KeyField ="Form_Template_ID"
                         runat="server"
                         Title ="Templates|<a href='#' onclick='gridEditorFormNew({element: this, w:400, h:600});' class='btn btn-primary'>New Template</a>"
                         Edit = "true"
@@ -28,7 +28,7 @@
                         _Required ="Text"
                         Hide="Form_Template_ID"
                         Labels ="Category_ID|Category"
-                        _DoNotEdit =""
+                        _DoNotEdit ="Category_ID"
                         _Formats ="Date|MM/dd/yyyy"
                         ColumnStyle ="Category_ID|text-align: left;"
                         Widths="default"
