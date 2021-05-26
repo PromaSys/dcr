@@ -2561,6 +2561,7 @@ function gridEdit(o) {
         gridRowEdit({ element: e });
     }
 
+    attachOnChangeToTypeSelect();
 }
 
 function gridRowPopFields(o) {

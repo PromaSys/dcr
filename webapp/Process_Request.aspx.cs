@@ -417,6 +417,13 @@ public partial class Process_Request : System.Web.UI.Page
                         Response.Write("{\"message\": \"" + Ex.Message + "\", \"messagetype\": \"danger\"}");
                     }
                 }
+                else if (RequestAction == "IsAChoiceField")
+                {
+                    string Selected_Value = gc.Req("selectedValueId");
+                    int valueId = Convert.ToInt32(gc.TryDecrypt(Selected_Value));
+
+                    Response.Write("{\"isAChoiceField\": \"" + ((valueId == 6 || valueId == 7) ? true : false) + "\", \"messagetype\": \"success\"}");
+                }
             }
 
             dt.Dispose();

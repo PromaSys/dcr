@@ -190,34 +190,27 @@ public partial class Dialog : System.Web.UI.Page
                     divChat.Height = Convert.ToInt32(DialogHeight) - 315;
                     break;
 
-                case "ChooseASubjectCategory":
+                case "TemplateFields":
 
-                    //string Category_ID = gc.Req("Test_ID");
+                    string Template_ID = gc.Req("Template_ID");
 
-                    //dtc = gc.GetTables("exec dcr_sp_get_subject_categories");
-                    //VGrid.GridTable = dtc[0];
-                    //VGrid.Table = "dcr_Subject_Categories";
-                    //VGrid.KeyField = "Category_ID";
-                    //VGrid.Edit = true;
-                    //VGrid.Labels = "";
-                    //VGrid.Formats = "";
-                    //VGrid.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
-                    //VGrid.Signatures = "Signature";
-                    //VGrid.AddSQL = gc.TraceSQL() + "|Test_ID|" + VTestID;
+                    dtc = gc.GetTables("exec dcr_sp_get_fields " + Template_ID);
 
-                    dtc = gc.GetTables("exec dcr_sp_get_subject_categories " + Session["UserID"].ToString() + ", " + Session["UserGroupID"].ToString());
-                    VGrid.GridTable = dtc[0];
-                    VGrid.Table = "dcr_Subject_Categories";
-                    VGrid.KeyField = "Cat_ID";
-                    VGrid.Edit = true;
-                    VGrid.Labels = "Category_ID|Category";
-                    VGrid.Formats = "";
-                    VGrid.Templates = "Category_ID|" + gc.GetSelect("selChoices", true, dtc[1]);
-                    VGrid.Title = "";
-                    VGrid.Calendars = "Date";
-                    VGrid.TextAreas = "";
-                    VGrid.Signatures = "Signature";
+                    HGrid.GridTable = dtc[0];
+                    HGrid.Table = "dcr_Form_Template_Fields";
+                    HGrid.KeyField = "Template_Field_ID";
+                    HGrid.Edit = true;
+                    HGrid.ColumnStyle = "Required|text-align: center;|Field_Type_ID|text-align: left;";
+                    HGrid.Labels = "Field_Type_ID|Field Field Type";
+                    HGrid.Formats = "";
+                    HGrid.DoNotEdit = "Choices";
+                    HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
+                    HGrid.Title = "";
+                    HGrid.Hide = "Form_Template_ID";
+                    //HGrid.Calendars = "Date";
+                    HGrid.TextAreas = "";
                     break;
+
             }
 
             gc = null;
