@@ -1882,6 +1882,7 @@ function gridEditorForm(o) {
                                         }
                                     });
                                     $('#diae' + TableID).dialog('destroy').remove();
+                                    ReloadPage();
                                 }
                                 else {
                                     $('#diae' + TableID).dialog('destroy').remove();

@@ -15,25 +15,23 @@
     })
 }
 
-function getRowValueByColumnName(elem, columnName) {
-    return getRowElementByColumnName(elem, columnName).innerText;
-}
+function displayChoicesEditor(elem, event) {
 
-function getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $(".hgHeaderRow:first th:contains('Name')").index()
-    return $(elem).closest('tr').children().eq(columnIndex)[0];
-}
+    let fieldId = getRowKeyFieldValue(elem);
+    let fieldName = getRowValueByColumnName(elem, 'Field');
+    closeDialogFromContext('TemplateFields');
 
-function getRowKeyFieldValue(elem) {
-    return $(elem).closest('tr').attr('kfv')
-}
+    gridPop({
+        context: 'FieldChoices',
+        type: 'horizontal',
+        title: `${fieldName} Field`,
+        w: 1200,
+        h: 600,
+        data: {
+            Field_ID: fieldId
+        }
+    })
 
-function grabDialogByContext(context) {
-    return $('#dia' + context);
-}
-
-function reloadDialog(dialog, endpoint, data) {
-    dialog.load(endpoint, data);
 }
 
 function attachOnChangeToTypeSelect() {
@@ -59,29 +57,30 @@ function attachOnChangeToTypeSelect() {
     })
 }
 
+function getRowValueByColumnName(elem, columnName) {
+    return getRowElementByColumnName(elem, columnName).innerText;
+}
+
+function getRowElementByColumnName(elem, columnName) {
+    let columnIndex = $(".hgHeaderRow:first th:contains('Name')").index()
+    return $(elem).closest('tr').children().eq(columnIndex)[0];
+}
+
+function getRowKeyFieldValue(elem) {
+    return $(elem).closest('tr').attr('kfv')
+}
+
+function grabDialogByContext(context) {
+    return $('#dia' + context);
+}
+
+function reloadDialog(dialog, endpoint, data) {
+    dialog.load(endpoint, data);
+}
 
 
 function closeDialogFromContext(context) {
     $('#dia' + context).dialog('destroy').remove()
-}
-
-function displayChoicesEditor(elem, event) {
-
-    let fieldId = getRowKeyFieldValue(elem);
-    let fieldName = getRowValueByColumnName(elem, 'Field');
-    closeDialogFromContext('TemplateFields');
-
-    gridPop({
-        context: 'FieldChoices',
-        type: 'horizontal',
-        title: `${fieldName} Field`,
-        w: 1200,
-        h: 600,
-        data: {
-            Field_ID: fieldId
-        }
-    })
-
 }
 
 function createTag(args) {

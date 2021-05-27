@@ -22,7 +22,7 @@
                         Table ="dcr_Form_Templates"
                         KeyField ="Form_Template_ID"
                         runat="server"
-                        Title ="Templates|<a href='#' onclick='gridEditorFormNew({element: this, w:400, h:600});' class='btn btn-primary'>New Template</a>"
+                        Title ="Templates|<a href='#' onclick='gridEditorFormNew({element: this, w:400, h:180});' class='btn btn-primary'>New Template</a>"
                         Edit = "false"
                         Links = "Name|gridEditorForm({element: this, w: RelativePixels('w', 1, 400), h: RelativePixels('h', 0.25, 600)})|Field_Count|displayTemplateFields(this)"
                         _Required ="Text"
