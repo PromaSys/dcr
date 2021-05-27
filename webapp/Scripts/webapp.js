@@ -20,10 +20,9 @@ function getRowValueByColumnName(elem, columnName) {
 }
 
 function getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $(`.hgHeaderRow th:contains("${columnName}")`).index();
+    let columnIndex = $(".hgHeaderRow:first th:contains('Name')").index()
     return $(elem).closest('tr').children().eq(columnIndex)[0];
 }
-
 
 function getRowKeyFieldValue(elem) {
     return $(elem).closest('tr').attr('kfv')
