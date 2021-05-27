@@ -221,14 +221,15 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.Table = "dcr_Form_Template_Field_Choices";
                     HGrid.KeyField = "Choice_ID";
                     HGrid.Edit = true;
-                    HGrid.ColumnStyle = "Required|text-align: center;|Field_Type_ID|text-align: left;";
+                    HGrid.ColumnStyle = "Choice|text-align: left;|Active|text-align: center;";
                     HGrid.Labels = "Field_Type_ID|Type";
                     HGrid.Formats = "";
                     HGrid.DoNotEdit = "Choices";
-                    HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
+                    HGrid.NewRecords = 10;
+                    //HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
                     HGrid.Title = "";
-                    HGrid.Hide = "Form_Template_ID";
-                    //HGrid.Calendars = "Date";
+                    //HGrid.Hide = "Form_Template_ID";
+                    HGrid.AddSQL = gc.TraceSQL() + "|Template_Field_ID|" + Field_ID;
                     HGrid.TextAreas = "";
                     break;
 
