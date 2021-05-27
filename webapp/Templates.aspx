@@ -28,7 +28,7 @@
                         _Required ="Text"
                         Hide="Form_Template_ID"
                         Labels ="Category_ID|Category"
-                        DoNotEdit ="Field_Count"
+                        DoNotEdit ="Field_Count|Category"
                         _Formats ="Date|MM/dd/yyyy"
                         ColumnStyle ="Field_Count|text-align: center;"
                         Widths="default"
