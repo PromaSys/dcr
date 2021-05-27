@@ -30,7 +30,7 @@
                         Labels ="Category_ID|Category"
                         DoNotEdit ="Field_Count|Category"
                         _Formats ="Date|MM/dd/yyyy"
-                        ColumnStyle ="Field_Count|text-align: center;"
+                        ColumnStyle ="Field_Count|text-align: center;|Active|text-align: center;"
                         Widths="default"
                         Calendars="Date"
                         TextAreas = "Long_Text|3"

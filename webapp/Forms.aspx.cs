@@ -31,7 +31,7 @@ public partial class Forms : System.Web.UI.Page
         litLeftMenu.Text = "";
         litLeftMenu.Text += gc.Filter("Category_ID", "Categories", true, dtc[1], 7, Filters);
         litLeftMenu.Text += gc.Filter("Subject_ID", "Subjects", true, dtc[2], 7, Filters);
-        litLeftMenu.Text += gc.Filter("Template_ID", "Forms", true, dtc[3], 7, Filters);
+        litLeftMenu.Text += gc.Filter("Template_ID", "Templates", true, dtc[3], 7, Filters);
 
         //litLeftMenu.Text += gc.MultipleSelectFilter("Multiple_Choice_IDs", "Multiple Choice", true, dtc[2], 3, Filters);
     }

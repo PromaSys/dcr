@@ -1,4 +1,31 @@
-﻿function displayTemplateFields(elem) {
+﻿
+function createTemplate() {
+
+    gridPop({
+        context: `SelectCategory`,
+        type: 'vertical',
+        title: 'New Template - Please select a Category',
+        w: 400,
+        h: 240,
+        saveFunction: function () {
+            let selectTag = vGridGetFieldValueByFieldName('Category')
+            let categoryId = selectTag.value;
+            closeDialogFromContext('NewTemplate');
+            gridPop({
+                context: `NewTemplate`,
+                type: 'vertical',
+                title: 'Enter Template information',
+                w: 400,
+                h: 500,
+                data: {
+                    categoryId: categoryId
+                }
+            })
+        }
+    })
+}
+
+function displayTemplateFields(elem) {
 
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
@@ -28,7 +55,7 @@ function displayChoicesEditor(elem, event) {
         w: 1200,
         h: 600,
         data: {
-            Field_ID: fieldId
+            Template_Field_ID: fieldId
         }
     })
 
@@ -57,12 +84,17 @@ function attachOnChangeToTypeSelect() {
     })
 }
 
+function vGridGetFieldValueByFieldName(fieldName) {
+    let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
+    return fieldElement.next().children(":first")[0];
+}
+
 function getRowValueByColumnName(elem, columnName) {
     return getRowElementByColumnName(elem, columnName).innerText;
 }
 
 function getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $(".hgHeaderRow:first th:contains('Name')").index()
+    let columnIndex = $(`.hgHeaderRow:last th:contains('${columnName}')`).index()
     return $(elem).closest('tr').children().eq(columnIndex)[0];
 }
 
@@ -77,7 +109,6 @@ function grabDialogByContext(context) {
 function reloadDialog(dialog, endpoint, data) {
     dialog.load(endpoint, data);
 }
-
 
 function closeDialogFromContext(context) {
     $('#dia' + context).dialog('destroy').remove()

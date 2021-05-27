@@ -213,7 +213,7 @@ public partial class Dialog : System.Web.UI.Page
 
                 case "FieldChoices":
 
-                    string Field_ID = gc.Req("Field_ID");
+                    string Field_ID = gc.Req("Template_Field_ID");
 
                     dtc = gc.GetTables("exec dcr_sp_get_choices " + Field_ID);
 
@@ -233,6 +233,43 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.TextAreas = "";
                     break;
 
+                case "SelectCategory":
+
+                    dtc = gc.GetTables("exec dcr_sp_select_template_category ");
+                    VGrid.GridTable = dtc[0];
+                    VGrid.Table = "dcr_Subject_Categories";
+                    VGrid.KeyField = "Category_ID";
+                    VGrid.Edit = true;
+                    VGrid.Labels = "Cat_ID|Category";
+                    VGrid.Formats = "";
+                    VGrid.Templates = "Cat_ID|" + gc.GetSelect("selChoices", true, dtc[1]);
+                    VGrid.Title = "";
+                    VGrid.Calendars = "Date";
+                    VGrid.TextAreas = "";
+                    VGrid.Signatures = "Signature";
+                    //VGrid.AddSQL = gc.TraceSQL() + "|Test_ID|" + VTestID;
+                    break;
+
+                case "NewTemplate":
+
+                    string Category_ID = gc.Req("categoryId");
+
+                    dtc = gc.GetTables("exec dcr_sp_create_template " + Session["UserID"].ToString() + ", " + Session["UserGroupID"].ToString() + ", '', ''");
+                    VGrid.GridTable = dtc[0];
+                    VGrid.Table = "dcr_Form_Templates";
+                    VGrid.KeyField = "Form_Template_ID";
+                    VGrid.DoNotEdit = "Category_ID";
+                    VGrid.Edit = true;
+                    VGrid.Labels = "Cat_ID|Category";
+                    VGrid.Hide = "Category|Field_Count";
+                    VGrid.Formats = "";
+                    VGrid.Templates = "Category_ID|" + gc.GetSelect("selChoices", true, dtc[1]);
+                    VGrid.Title = "";
+                    VGrid.Calendars = "Date";
+                    VGrid.TextAreas = "";
+                    VGrid.Signatures = "Signature";
+                    VGrid.AddSQL = gc.TraceSQL() + "|Category_ID|" + Category_ID;
+                    break;
             }
 
             gc = null;
