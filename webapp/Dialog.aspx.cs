@@ -38,6 +38,8 @@ public partial class Dialog : System.Web.UI.Page
             string DialogTitle = gc.Req("t");
             string DialogType = gc.Req("type");
 
+            string Template_ID = "";
+
             switch (DialogType)
             {
                 case "horizontal":
@@ -192,7 +194,7 @@ public partial class Dialog : System.Web.UI.Page
 
                 case "TemplateFields":
 
-                    string Template_ID = gc.Req("Template_ID");
+                    Template_ID = gc.Req("Template_ID");
 
                     dtc = gc.GetTables("exec dcr_sp_get_template_fields " + Template_ID);
 
@@ -207,15 +209,17 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
                     HGrid.Title = "";
                     HGrid.Hide = "Form_Template_ID";
-                    //HGrid.Calendars = "Date";
+                    HGrid.Calendars = "Date";
+                    HGrid.NewRecords = 5;
                     HGrid.TextAreas = "";
+                    HGrid.AddSQL = gc.TraceSQL() + "|Form_Template_ID|" + Template_ID;
                     break;
 
                 case "FieldChoices":
 
                     string Field_ID = gc.Req("Template_Field_ID");
 
-                    dtc = gc.GetTables("exec dcr_sp_get_choices " + Field_ID);
+                    dtc = gc.GetTables("exec dcr_sp_get_field_choices " + Field_ID);
 
                     HGrid.GridTable = dtc[0];
                     HGrid.Table = "dcr_Form_Template_Field_Choices";
@@ -233,21 +237,27 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.TextAreas = "";
                     break;
 
-                case "SelectCategory":
+                case "TemplateCategories":
 
-                    dtc = gc.GetTables("exec dcr_sp_select_template_category ");
-                    VGrid.GridTable = dtc[0];
-                    VGrid.Table = "dcr_Subject_Categories";
-                    VGrid.KeyField = "Category_ID";
-                    VGrid.Edit = true;
-                    VGrid.Labels = "Cat_ID|Category";
-                    VGrid.Formats = "";
-                    VGrid.Templates = "Cat_ID|" + gc.GetSelect("selChoices", true, dtc[1]);
-                    VGrid.Title = "";
-                    VGrid.Calendars = "Date";
-                    VGrid.TextAreas = "";
-                    VGrid.Signatures = "Signature";
-                    //VGrid.AddSQL = gc.TraceSQL() + "|Test_ID|" + VTestID;
+                    Template_ID = gc.Req("Template_ID");
+
+                    dtc = gc.GetTables("exec dcr_sp_get_template_categories " + Template_ID);
+
+                    HGrid.GridTable = dtc[0];
+                    HGrid.Table = "dcr_Form_Template_Categories";
+                    HGrid.KeyField = "Template_Category_ID";
+                    HGrid.Edit = true;
+                    HGrid.Hide = "Template_ID";
+                    HGrid.Labels = "Category_ID|Category";
+                    HGrid.Formats = "";
+                    HGrid.ColumnStyle = "Category_ID|text-align: left;|Active|text-align: center;";
+                    HGrid.Templates = "Category_ID|" + gc.GetSelect("selCategories", true, dtc[1]);
+                    HGrid.Title = "";
+                    HGrid.Calendars = "Date";
+                    HGrid.TextAreas = "";
+                    HGrid.NewRecords = 25;
+                    HGrid.DeleteColumn = true;
+                    HGrid.AddSQL = gc.TraceSQL() + "|Template_ID|" + Template_ID;
                     break;
 
                 case "NewTemplate":

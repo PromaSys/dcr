@@ -42,6 +42,25 @@ function displayTemplateFields(elem) {
     })
 }
 
+function displayTemplateCategories(elem) {
+    let templateId = getRowKeyFieldValue(elem);
+    let templateName = getRowValueByColumnName(elem, 'Name');
+
+    gridPop({
+        context: `TemplateCategories`,
+        type: 'horizontal',
+        title: `${templateName} Categories`,
+        w: 400,
+        h: 800,
+        data: {
+            Template_ID: templateId
+        },
+        afterSave: function () {
+            ReloadPage();
+        }
+    })
+}
+
 function displayChoicesEditor(elem, event) {
 
     let fieldId = getRowKeyFieldValue(elem);
