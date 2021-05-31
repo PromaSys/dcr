@@ -131,25 +131,17 @@ function attachOnChangeToMultiselect() {
 function handleSelection(e) {
     var target = getEventTarget(e);
     if (target.tagName.toLowerCase() === 'input') {
-
         var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
         var allCheckboxes = getAllCheckboxes()
-        var allAreChecked = isAllCheckboxesChecked()
+        var allCheckboxSelected = getAllCheckBox().checked
 
-        console.log("allAreChecked ", allAreChecked)
-        console.log("!targetIsAllCheckbox", !targetIsAllCheckbox)
-
-        if (getAllCheckBox().checked && targetIsAllCheckbox) {
-            allCheckboxes.each((index, checkbox) => {
-                checkbox.checked = true;
-            })
+        if (allCheckboxSelected && targetIsAllCheckbox) {
+            setCheckboxesState(allCheckboxes, true)
         }
-        else if (!getAllCheckBox().checked && targetIsAllCheckbox) {
-            allCheckboxes.each((index, checkbox) => {
-                checkbox.checked = false;
-            })
+        else if (!allCheckboxSelected && targetIsAllCheckbox) {
+            setCheckboxesState(allCheckboxes, false)
         }
-        else if (getAllCheckBox().checked && !targetIsAllCheckbox) {
+        else if (allCheckboxSelected && !targetIsAllCheckbox) {
             allCheckboxes.each((index, checkbox) => {
                 if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
                     checkbox.checked = false
@@ -157,6 +149,12 @@ function handleSelection(e) {
             target.checked = true
         }
     }
+}
+
+function setCheckboxesState(checkboxes, state) {
+    checkboxes.each((index, checkbox) => {
+        checkbox.checked = state;
+    })
 }
 
 function isAllCheckboxesChecked() {
