@@ -121,6 +121,67 @@ function _attachOnChangeToTypeSelect() {
     })
 }
 
+function attachOnChangeToMultiselect() {
+
+    $('#selCategories').change(function(e){
+        handleSelection(e)
+    })
+}
+
+function handleSelection(e) {
+    var target = getEventTarget(e);
+    if (target.tagName.toLowerCase() === 'input') {
+
+        var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
+        var allCheckboxes = getAllCheckboxes()
+        var allAreChecked = isAllCheckboxesChecked()
+
+        console.log("allAreChecked ", allAreChecked)
+        console.log("!targetIsAllCheckbox", !targetIsAllCheckbox)
+
+        if (getAllCheckBox().checked && targetIsAllCheckbox) {
+            allCheckboxes.each((index, checkbox) => {
+                checkbox.checked = true;
+            })
+        }
+        else if (!getAllCheckBox().checked && targetIsAllCheckbox) {
+            allCheckboxes.each((index, checkbox) => {
+                checkbox.checked = false;
+            })
+        }
+        else if (getAllCheckBox().checked && !targetIsAllCheckbox) {
+            allCheckboxes.each((index, checkbox) => {
+                if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
+                    checkbox.checked = false
+            })
+            target.checked = true
+        }
+    }
+}
+
+function isAllCheckboxesChecked() {
+    var allAreChecked = true
+    getAllCheckboxes().each((index, checkbox) => {
+        if (checkbox.checked == false) {
+            allAreChecked = false
+        }        
+    })
+    return allAreChecked
+}
+
+function getAllCheckboxes() {
+    return $($("#selCategories")[0]).find('input')
+}
+
+function getAllCheckBox() {
+    return getAllCheckboxes()[0]
+}
+
+function getEventTarget(e) {
+    e = e || window.event;
+    return e.target || e.srcElement;
+}
+
 function vGridGetFieldValueByFieldName(fieldName) {
     let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
     return fieldElement.next().children(":first")[0];
