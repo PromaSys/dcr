@@ -1,5 +1,5 @@
 ﻿
-function createTemplate() {
+function _createTemplate() {
 
     gridPop({
         context: `SelectCategory`,
@@ -33,16 +33,34 @@ function displayTemplateFields(elem) {
     gridPop({
         context: `TemplateFields`,
         type: 'horizontal',
-        title: `${templateName} Fields`,
-        w: 1200,
-        h: 600,
+        title: `${templateName}`,
+        w: RelativePixels('w', .9),
+        h: RelativePixels('h', .75),
         data: {
             Template_ID: templateId
-        }
-    })
+        },
+        buttons: {
+            'Close': {
+                text: 'Close',
+                priority: 'primary',
+                style: 'background: #428BCA; color: #fff;',
+                click: function () {
+                    // save scroll position
+                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+
+                    // apply filters
+                    gridApplyFilters();
+
+                    //$('#diaTemplateFields').dialog('destroy').remove();
+                    //ReloadPage();
+
+                }
+            }
+        }        
+    });
 }
 
-function displayTemplateCategories(elem) {
+function _displayTemplateCategories(elem) {
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
 
@@ -61,7 +79,7 @@ function displayTemplateCategories(elem) {
     })
 }
 
-function displayChoicesEditor(elem, event) {
+function _displayChoicesEditor(elem, event) {
 
     let fieldId = getRowKeyFieldValue(elem);
     let fieldName = getRowValueByColumnName(elem, 'Field');
@@ -80,7 +98,7 @@ function displayChoicesEditor(elem, event) {
 
 }
 
-function attachOnChangeToTypeSelect() {
+function _attachOnChangeToTypeSelect() {
     let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
     $("#selFieldType").on('change', (event) => {
         jqxhr = $.getJSON("Process_Request.aspx", {
@@ -143,4 +161,27 @@ function createTag(args) {
 
     tag.appendChild(tagText);
     return tag
+}
+
+
+function editTemplateField(elem) {
+    gridEditorForm({
+        element: elem,
+        w: RelativePixels('w', 1, 800),
+        h: RelativePixels('h', .7),
+        afterSave: function () {
+            // close form
+            $('#diaetabGridTemplateFields').dialog('destroy').remove();
+
+            gridReloadDialog('TemplateFields', true);
+        },
+        afterLoad: function () {
+
+            // enable/disable form controls based on existing loaded data
+
+
+            // add an onchange to field type select to alter form controls
+
+        }
+    });
 }

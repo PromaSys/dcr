@@ -196,22 +196,24 @@ public partial class Dialog : System.Web.UI.Page
 
                     Template_ID = gc.Req("Template_ID");
 
-                    dtc = gc.GetTables("exec dcr_sp_get_template_fields " + Template_ID);
+                    dtc = gc.GetTables("exec dcr_sp_template_fields " + Template_ID);
 
                     HGrid.GridTable = dtc[0];
                     HGrid.Table = "dcr_Form_Template_Fields";
                     HGrid.KeyField = "Template_Field_ID";
-                    HGrid.Edit = true;
+                    HGrid.Edit = false;
                     HGrid.ColumnStyle = "Required|text-align: center;|Field_Type_ID|text-align: left;";
-                    HGrid.Labels = "Field_Type_ID|Type";
+                    HGrid.Labels = "Field_Type_ID|Type|Choice_Count|Choices";
                     HGrid.Formats = "";
-                    HGrid.DoNotEdit = "Choices";
+                    HGrid.DoNotEdit = "Choice_Count";
+                    HGrid.Blocked = "Choices";
                     HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
-                    HGrid.Title = "";
-                    HGrid.Hide = "Form_Template_ID";
+                    HGrid.Title = "Fields|<a href='#' onclick='gridEditorFormNew({element: this, w: 800, h: 400});' class='btn btn-primary' style='color: white !important;' >New Field</a>";
+                    HGrid.Hide = "Template_Field_ID";
+                    HGrid.Links = "Field|editTemplateField(this);";
                     HGrid.Calendars = "Date";
                     HGrid.NewRecords = 5;
-                    HGrid.TextAreas = "";
+                    HGrid.TextAreas = "Choices|8";
                     HGrid.AddSQL = gc.TraceSQL() + "|Form_Template_ID|" + Template_ID;
                     break;
 

@@ -19,11 +19,11 @@ public partial class Templates : System.Web.UI.Page
         string Filters = gc.Req("filters");
         string Search = gc.Req("search");
 
-        dtc = gc.GetTables("exec dcr_sp_get_templates " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
+        dtc = gc.GetTables("exec dcr_sp_templates " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
 
         hgTemplates.Height = AvailableClientHeight;
         hgTemplates.GridTable = dtc[0];
-        hgTemplates.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
+        hgTemplates.Templates = "Subject_Category_IDs|" + gc.GetMultipleSelect("selCategories", dtc[2], 3, 150);
         //hgTemplates.AddSQL = gc.TraceSQL() + "Category_ID";
 
         //hgTest.Filters = "Integer|Integer Filter|" + gc.GetSelect("selFilterInteger", false, dtc[2], 3, "123");

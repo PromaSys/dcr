@@ -1,4 +1,4 @@
-﻿/*
+/*
     https://work.smarchal.com/twbscolor/
 */
 
@@ -7,7 +7,7 @@
 }
 
     .navbar .navbar-brand {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar .navbar-brand:hover,
@@ -16,7 +16,7 @@
         }
 
     .navbar .navbar-text {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar .navbar-text a {
@@ -29,7 +29,7 @@
             }
 
     .navbar .navbar-nav .nav-link {
-        color: #ffffff;
+        color: #FFFFFF;
         border-radius: .25rem;
         margin: 0 0.25em;
         white-space: nowrap;
@@ -60,30 +60,29 @@
         }
 
         .navbar .navbar-toggler .navbar-toggler-icon {
-            color: #ffffff;
+            color: #FFFFFF;
         }
 
     .navbar .navbar-collapse,
     .navbar .navbar-form {
-        border-color: #ffffff;
+        border-color: #FFFFFF;
     }
 
     .navbar .navbar-link {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar .navbar-link:hover {
             color: #07a5df;
         }
 
-    .navbar .nav-item .active {
-        color: #07a5a8 !important;
-        font-weight: 500;
-    }
+.navbar .nav-item .active {
+    color: #07a5df !important;
+}
 
 @media (max-width: 575px) {
     .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar-expand-sm .navbar-nav .show .dropdown-menu .dropdown-item:hover,
@@ -99,7 +98,7 @@
 
 @media (max-width: 767px) {
     .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar-expand-md .navbar-nav .show .dropdown-menu .dropdown-item:hover,
@@ -115,7 +114,7 @@
 
 @media (max-width: 991px) {
     .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar-expand-lg .navbar-nav .show .dropdown-menu .dropdown-item:hover,
@@ -131,7 +130,7 @@
 
 @media (max-width: 1199px) {
     .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item {
-        color: #ffffff;
+        color: #FFFFFF;
     }
 
         .navbar-expand-xl .navbar-nav .show .dropdown-menu .dropdown-item:hover,
@@ -146,7 +145,7 @@
 }
 
 .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item {
-    color: #ffffff;
+    color: #FFFFFF;
 }
 
     .navbar-expand .navbar-nav .show .dropdown-menu .dropdown-item:hover,

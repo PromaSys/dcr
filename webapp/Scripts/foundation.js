@@ -252,7 +252,8 @@ $(document).ready(function () {
     // hg vertical scroll top
     var st = GetCookie('hgScrollTop');
     if (st != null && st != 'undefined') {
-        document.getElementById("divBody").scrollTop = st;
+        //document.getElementById("divBody").scrollTop = st;
+        $('.tablediv').scrollTop(st);
         SetCookie('hgScrollTop', 0, -1);
 
         var kfv = GetCookie('hgHighlightedID');
@@ -954,6 +955,27 @@ function gridPop(o) {
         }
     }
 
+    o.data.c = o.context;
+    o.data.cid = o.contextID;
+    o.data.h = o.h;
+    o.data.w = o.w;
+    o.data.t = o.title;
+    o.data.type = o.type;
+
+    // add refresh button
+    var refresh = {
+        Refresh: {
+            text: 'Refresh',
+            id: 'butRefresh' + o.context,
+            style: 'display: none;',
+            priority: 'primary',
+            click: function () {
+                dialogP.load(o.load.replace(/.aspx/, ''), o.data);
+            }
+        }
+    };
+    o.buttons = $.extend({}, refresh, o.buttons);
+
     var dialogP = $("<div id='dia" + o.context + "' style='position:relative; margin: 0px;'><img id='imgWait' src='images/wait.gif' class='waitgif' /></div>").dialog({
         autoOpen: false,
         title: o.title,
@@ -966,13 +988,6 @@ function gridPop(o) {
         buttons: o.buttons,
         dialogObj: o
     });
-
-    o.data.c = o.context;
-    o.data.cid = o.contextID;
-    o.data.h = o.h;
-    o.data.w = o.w;
-    o.data.t = o.title;
-    o.data.type = o.type;
 
     // post 
     dialogP.load(o.load.replace(/.aspx/, ''), o.data);
@@ -1752,7 +1767,7 @@ function gridEditorForm(o) {
                 ftpAttr += "result='" + Text + "' ";
                 ftpAttr += "resultkey='" + Key + "' ";
                 ftpAttr += "tdo='" + index + "' ";
-                ftpAttr += "style='_width: 95%;' ";
+                //ftpAttr += "style='_width: 95%;' ";
 
                 if (ftp.indexOf("template='select'") > -1) {
                     ftpAttr += "onchange='GetResultSelect(this);' ";
@@ -1858,38 +1873,46 @@ function gridEditorForm(o) {
                 },
                 'Save': {
                     text: 'Save', priority: 'primary', style: 'background: #428BCA; color: #fff;', kfv: key, click: function () {
+                        
                         gridSave({
                             id: TableID,
                             afterSave: function () {
 
-                                // update interface
-                                var results = $('.hgeditformtable .hgResult');
-                                var kfv = $('.hgeditformtable').attr('kfv');
-
-                                $hgTDs = $('#' + TableID + ' tr[kfv="' + kfv + '"]').children('td');
-
-                                if (results != null) {
-                                    results.each(function () {
-                                        var TDIndex = $(this).attr('tdo');
-                                        $hgTD = $hgTDs.eq(TDIndex);
-                                        $hgTD.attr('key', $(this).attr('resultkey'));
-                                        var link = $hgTD.find('a');
-                                        if (link.length == 1) {
-                                            link.html($(this).attr('result'));
-                                        }
-                                        else {
-                                            $hgTD.html($(this).attr('result'));
-                                        }
-                                    });
-                                    $('#diae' + TableID).dialog('destroy').remove();
-                                    ReloadPage();
+                                if (typeof o.afterSave == 'function') {
+                                    o.afterSave(this);
+                                    return;
                                 }
                                 else {
-                                    $('#diae' + TableID).dialog('destroy').remove();
-                                    ReloadPage();
+                                    // update interface
+                                    var results = $('.hgeditformtable .hgResult');
+                                    var kfv = $('.hgeditformtable').attr('kfv');
+
+                                    $hgTDs = $('#' + TableID + ' tr[kfv="' + kfv + '"]').children('td');
+
+                                    if (results != null) {
+                                        results.each(function () {
+                                            var TDIndex = $(this).attr('tdo');
+                                            $hgTD = $hgTDs.eq(TDIndex);
+                                            $hgTD.attr('key', $(this).attr('resultkey'));
+                                            var link = $hgTD.find('a');
+                                            if (link.length == 1) {
+                                                link.html($(this).attr('result'));
+                                            }
+                                            else {
+                                                $hgTD.html($(this).attr('result'));
+                                            }
+                                        });
+                                        $('#diae' + TableID).dialog('destroy').remove();
+                                        ReloadPage();
+                                    }
+                                    else {
+                                        $('#diae' + TableID).dialog('destroy').remove();
+                                        ReloadPage();
+                                    }
                                 }
                             }
                         });
+                        
                     }
                 }
             }
@@ -1901,8 +1924,8 @@ function gridEditorForm(o) {
             $t.find("tr[kfv='-1']").remove();
         }
 
-        if (typeof afterLoad != 'undefined') {
-            afterLoad(this);
+        if (typeof o.afterLoad != 'undefined') {
+            o.afterLoad(this);
         }
 
         var fe = $(dialog).first('.hgResult');
@@ -1923,7 +1946,8 @@ function gridEditorFormNew(o) {
         gridEditorFormNew({
             element: ,
             w:,
-            h:
+            h:,
+            afterLoad:
         });
     */
 
@@ -1953,7 +1977,8 @@ function gridEditorFormNew(o) {
     gridEditorForm({
         element: e,
         w: o.w,
-        h: o.h
+        h: o.h,
+        afterLoad: o.afterLoad
     });
 }
 
@@ -2448,7 +2473,7 @@ function gridEdit(o) {
             ftpAttr += "result='" + Text + "' ";
             ftpAttr += "resultkey='" + Key + "' ";
             ftpAttr += "tdo='" + index + "' ";
-            ftpAttr += "style='_width: 95%;' ";
+            //ftpAttr += "style='_width: 95%;' ";
 
             if (ftp.indexOf("template='select'") > -1) {
                 //ftpAttr += "_onchange='GetResultSelect(this);' ";
@@ -2463,14 +2488,14 @@ function gridEdit(o) {
                 for (var i = 0; i < values.length; i++) {
                     ftp = ftp.replace("value='" + values[i] + "'", "value='" + values[i] + "' checked");
                 }
-                ftp = ftp.replace(/value=/gi, " _onclick='GetResultMultiSelect(this);' value=");
+                //ftp = ftp.replace(/value=/gi, " _onclick='GetResultMultiSelect(this);' value=");
 
-                //ftp = ftp.replace(/<table/i, "<table " + ftpAttr);
-                ftp = ftp.replace(/<table/i, "<table class" + ftpAttr);
+                ftp = ftp.replace(/<table/i, "<table " + ftpAttr);
+                //ftp = ftp.replace(/<table/i, "<table class" + ftpAttr);
 
                 //limit height
 
-                ftp = ftp.replace(/_width: 95%;/i, 'height: 150px; overflow: auto;');
+                //ftp = ftp.replace(/_width: 95%;/i, 'height: 150px; overflow: auto;');
                 //ftp = '<div class="MultipleselectInline">' + ftp + '</div>';
             }
             else if (ftp.indexOf("template='checkbox'") > -1) {
@@ -5115,6 +5140,10 @@ function RelativePixels(wh, p, m) {
 }
 
 function ReloadPage() {
+
+    // scroll position of underlying hg
+    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+
     var url = location.href;
 
     // strip bookmark
@@ -5122,6 +5151,33 @@ function ReloadPage() {
         url = url.substr(0, url.indexOf("#"), url.length - url.indexOf("#"));
     }
     location.href = url;
+}
+
+function gridReloadDialog(context, remeberVericalScroll) {
+
+    var $dia = $('#dia' + context);
+
+    var verticalScrolls = new Array();
+
+    if (remeberVericalScroll) {
+        // all hg elements with a vetical scroll
+        $dia.find('.tablediv').each(function () {
+            verticalScrolls.push($(this).scrollTop());
+        });
+    }
+
+    //$dia.load(u);
+    $('#butRefresh' + context).click();
+
+    if (remeberVericalScroll) {
+        WaitUntil(function () { return $dia.find('.tablediv').length > 0; }, function () {
+            $dia.find('.tablediv').each(function (index) {
+                $(this).scrollTop(verticalScrolls[index]);
+            });
+        });
+
+
+    }
 }
 
 function SetGridPage(p, c) {

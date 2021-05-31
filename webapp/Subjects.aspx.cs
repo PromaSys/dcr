@@ -15,7 +15,7 @@ public partial class Subjects : System.Web.UI.Page
         string Filters = gc.Req("filters");
         string Search = gc.Req("search");
 
-        dtc = gc.GetTables("exec dcr_sp_get_subjects " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
+        dtc = gc.GetTables("exec dcr_sp_subjects " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
 
         hgSubjects.Height = AvailableClientHeight;
         hgSubjects.GridTable = dtc[0];
