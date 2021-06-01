@@ -17,10 +17,7 @@
 </head>
 <body>
     <div id="template-form-wrapper">
-        <h1>Competitive Pricing Form Template</h1>
-        <form id="template-form">
-            <asp:Literal ID="FormContent" runat="server" />
-        </form>
+        <asp:Literal ID="Form" runat="server" />
     </div>
 </body>
 </html>

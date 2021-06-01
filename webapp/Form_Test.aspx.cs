@@ -17,7 +17,11 @@ public partial class Form_Test : System.Web.UI.Page
         DataTableCollection dtc = null;
         StringBuilder sb = new StringBuilder();
 
-        dtc = gc.GetTables("exec dcr_sp_form 1");
+        string FormTemplateID = gc.Req("fid");
+        string context = gc.Req("context");
+
+
+        dtc = gc.GetTables($"exec dcr_sp_form {FormTemplateID}");
         dt = dtc[0];
 
         IRenderer currentRenderer;
@@ -26,16 +30,15 @@ public partial class Form_Test : System.Web.UI.Page
         {
             currentRenderer = MapTypeToInputRenderer(row["Type"].ToString());
             var dataFields = new Dictionary<string, string>(){
-                {"TemplateFieldId", row["Template_Field_ID"].ToString()},
-                {"FieldName", row["Field"].ToString()},
-                {"FieldDescription", row["Template_Field_Description"].ToString()},
-                {"Choices", row["Choices"].ToString()},
-                {"Required", row["Required"].ToString()}
-            };
-            sb.AppendLine(currentRenderer.Draw(dataFields));
+            {"TemplateFieldId", row["Template_Field_ID"].ToString()},
+            {"FieldName", row["Field"].ToString()},
+            {"FieldDescription", row["Template_Field_Description"].ToString()},
+            {"Choices", row["Choices"].ToString()},
+            {"Required", row["Required"].ToString()}
+        };
+        sb.AppendLine(currentRenderer.Draw(dataFields));
+        Form.Text = $@"<form id='{context}'>{sb}</div>";
         }
-
-        FormContent.Text = $"{sb}";
     }
 
     private IRenderer MapTypeToInputRenderer(string type)
@@ -73,14 +76,12 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
-
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <input type='text' class='form-control' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                        <input type='text' class='form-control form-input' id='{DataFields["FieldName"]}' />
                     </div>";
         }
     }
@@ -89,14 +90,12 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
-
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <input type='number' class='form-control' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                        <input type='number' class='form-control form-input' id='{DataFields["FieldName"]}'/>
                     </div>";
         }
     }
@@ -105,14 +104,12 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
-
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <textarea class='form-control' id='{DataFields["FieldName"]}' rows='3' {isRequired}></textarea>
+                        <textarea class='form-control form-input' id='{DataFields["FieldName"]}' rows='3'></textarea>
                      </div>";
         }
     }
@@ -121,10 +118,10 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            return $@"<div class='form-group form-check d-flex flex-row align-items-center'>
-                        <input type = 'checkbox' class='form-check-input' id='{DataFields["FieldName"]}'>
+            return $@"<div class='form-group form-check d-flex flex-row align-items-center form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <input type = 'checkbox' class='form-check-input form-input' id='{DataFields["FieldName"]}'>
                         <label class='form-check-label' for='{DataFields["FieldName"]}'>
-                            <span class='d-flex flex-row align-items-baseline'>
+                            <span class='d-flex flex-row align-items-baseline bold'>
                                 {DataFields["FieldName"]}
                                 &nbsp
                                 <small class='form-text text-muted'>{DataFields["FieldDescription"]}.</small>
@@ -138,14 +135,12 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
-
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <input type='date' class='form-control datepicker' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                        <input type='date' class='form-control datepicker form-input' id='{DataFields["FieldName"]}'/>
                     </div>";
         }
     }
@@ -155,15 +150,14 @@ public partial class Form_Test : System.Web.UI.Page
         string options { get; set; }
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
             options = buildOptions(DataFields["Choices"]);
 
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <select class='form-control' id='exampleFormControlSelect2' {isRequired}>
+                        <select class='form-control form-input' id='exampleFormControlSelect2'>
                             {options}
                         </select>
                      </div>";
@@ -188,11 +182,10 @@ public partial class Form_Test : System.Web.UI.Page
         string options { get; set; }
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
             options = buildOptions(DataFields["Choices"]);
 
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
@@ -211,7 +204,7 @@ public partial class Form_Test : System.Web.UI.Page
             foreach (string option in optionsList)
             {
                 string checkbox = $@"<div class='form-check form-check-inline'>
-                                        <input class='form-check-input' type='checkbox' id='{option}' value='{option}'/>
+                                        <input class='form-check-input form-input' type='checkbox' id='{option}' value='{option}'/>
                                         <label class='form-check-label' for='{option}'>{option}</label>
                                      </div>";
                 options.AppendLine($"{checkbox}");
@@ -224,14 +217,12 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            string isRequired = DataFields["Required"] == "1" ? "required" : null;
-
-            return $@"<div class='mb-3'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <input type='file' class='form-control-file' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                        <input type='file' class='form-control-file form-input' id='{DataFields["FieldName"]}'/>
                     </div>";
         }
     }

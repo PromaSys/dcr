@@ -1,47 +1,22 @@
 ﻿
-function _createTemplate() {
+function previewForm(elem) {
 
-    gridPop({
-        context: `SelectCategory`,
-        type: 'vertical',
-        title: 'New Template - Please select a Category',
-        w: 400,
-        h: 240,
-        saveFunction: function () {
-            let selectTag = vGridGetFieldValueByFieldName('Category')
-            let categoryId = selectTag.value;
-            closeDialogFromContext('NewTemplate');
-            gridPop({
-                context: `NewTemplate`,
-                type: 'vertical',
-                title: 'Enter Template information',
-                w: 400,
-                h: 500,
-                data: {
-                    categoryId: categoryId
-                }
-            })
-        }
-    })
-}
-
-function displayTemplateFields(elem) {
-
-    let context = 'TemplateFields'
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
+    let context = templateName.replace(/ /g, '') + '-' + 'TestForm';
+
 
     gridPop({
         context: context,
-        type: 'horizontal',
-        title: `${templateName}`,
-        w: RelativePixels('w', .9),
-        h: RelativePixels('h', .75),
+        load: 'Form_Test',
+        title: `${templateName} Form Demo`,
+        w: RelativePixels('w', 1, 550),
+        h: RelativePixels('h', 0.85),
         data: {
-            Template_ID: templateId
+            context: context,
+            fid: templateId
         },
         afterLoad: function (elem) {
-            attachOnDragListenersToGrid()
         },
         buttons: {
             'Close': {
@@ -49,122 +24,73 @@ function displayTemplateFields(elem) {
                 priority: 'primary',
                 style: 'background: #428BCA; color: #fff;',
                 click: function () {
-                    // save scroll position
-                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
-                    // apply filters
-                    gridApplyFilters();
+                    let validInputs = validateFormInputs().isValid;
+                    if (validInputs) {
+                        SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+                        gridApplyFilters();
+                    } else {
+                        gridBox({
+                            title: 'Validation: Required Field Empty',
+                            body: `You missed making an entry to a required field (${validateFormInputs().invalidFields[0]}).<br /><br />Please make an entry.`,
+                            type: 'info'
+                        })
+                    }
                 }
             }
-        }        
+        }
     });
 
-    function drag(ev) {
-        var rowKfv = $(ev.target).closest('tr').attr('kfv')
-        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
-        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
-        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
-
-    }
-
-    function drop(ev) {
-        ev.preventDefault();
-        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
-        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
-
-        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
-
-        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
-
-        var jqxhr = $.getJSON("Process_Request.aspx", {
-            action: "UpdateTemplateFieldSortOrder",
-            fid: draggedRowKfv,
-            newso: rowNewSortOrder - 50,
+    function validateFormInputs() {
+        let payload = {
+            isValid: true,
+            invalidFields: []
+        }
+        $(`form#${context} .form-input-wrapper`).each(function (index, inputWrapper) {
+            var $inputWrapper = $(inputWrapper);
+            var fieldName = $inputWrapper.find('label').attr('for')
+            if ($inputWrapper.attr('fr') === "1") {
+                let inputs = $inputWrapper.find('.form-input');
+                if (inputsAreBlank(inputs) === true) {
+                    highglightRed(inputs);
+                    payload.isValid = false
+                    payload.invalidFields.push(fieldName)
+                } else {
+                    removeRedHighligh(inputs);
+                }
+            }
         })
-        .done(function (data) {
-            $(`#butRefresh${context}`).click();
-        }).fail(function (data) {
-         alert("Update failed.");
+        return payload
+    }
+    function highglightRed(inputsArray) {
+        inputsArray.each(function (index, input) {
+            var $input = $(input)
+            $input.addClass('is-invalid')
         });
-
-        
     }
-
-    function attachOnDragListenersToGrid() {
-        $('#diaTemplateFields').on("dragstart", function (ev) {
-            drag(ev)
-        })
-
-        $('#diaTemplateFields').on("dragover", function (ev) {
-            ev.preventDefault()
-        })
-
-        $('#diaTemplateFields').on("drop", function (ev) {
-            drop(ev)
-        })
+    function removeRedHighligh(inputsArray) {
+        inputsArray.each(function (index, input) {
+            var $input = $(input)
+            $input.removeClass('is-invalid')
+        });
     }
-
-}
-
-function _displayTemplateCategories(elem) {
-    let templateId = getRowKeyFieldValue(elem);
-    let templateName = getRowValueByColumnName(elem, 'Name');
-
-    gridPop({
-        context: `TemplateCategories`,
-        type: 'horizontal',
-        title: `${templateName} Categories`,
-        w: 400,
-        h: 800,
-        data: {
-            Template_ID: templateId
-        },
-        afterSave: function () {
-            ReloadPage();
-        }
-    })
-}
-
-function _displayChoicesEditor(elem, event) {
-
-    let fieldId = getRowKeyFieldValue(elem);
-    let fieldName = getRowValueByColumnName(elem, 'Field');
-    closeDialogFromContext('TemplateFields');
-
-    gridPop({
-        context: 'FieldChoices',
-        type: 'horizontal',
-        title: `${fieldName} Field`,
-        w: 1200,
-        h: 600,
-        data: {
-            Template_Field_ID: fieldId
-        }
-    })
-
-}
-
-function _attachOnChangeToTypeSelect() {
-    let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
-    $("#selFieldType").on('change', (event) => {
-        jqxhr = $.getJSON("Process_Request.aspx", {
-            action: "IsAChoiceField",
-            selectedValueId: event.target.value
-        }).done(function (res) {
-            if (res.isAChoiceField === "True") {
-                let choicesLink = createTag({
-                    tagName: 'a', tagTextContent: 'Edit Choices',
-                    attributes: {
-                        'href': '#',
-                        'onclick': 'displayChoicesEditor(this, event)'
-                    },
-                });
-                $(rowChoicesElement).html(choicesLink);
-            } else {
-                $(rowChoicesElement).html('Field type does not have choices');
+    function inputsAreBlank(inputsArray) {
+        var blank = true
+        inputsArray.each(function (index, input) {
+            var $input = $(input)
+            if ($input.attr('type') === "checkbox") {
+                if ($input.is(":checked")) {
+                    blank = false;
+                }
+            }
+            else if ($input.val() !== "") {
+                blank = false;
             }
         });
-    })
+        return blank
+    }
+
 }
+
 
 function vGridGetFieldValueByFieldName(fieldName) {
     let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
@@ -290,4 +216,171 @@ function getEventTarget(e) {
 function getEventType(e) {
     e = e || window.event;
     return e.type || e.type;
+}
+
+function _createTemplate() {
+
+    gridPop({
+        context: `SelectCategory`,
+        type: 'vertical',
+        title: 'New Template - Please select a Category',
+        w: 400,
+        h: 240,
+        saveFunction: function () {
+            let selectTag = vGridGetFieldValueByFieldName('Category')
+            let categoryId = selectTag.value;
+            closeDialogFromContext('NewTemplate');
+            gridPop({
+                context: `NewTemplate`,
+                type: 'vertical',
+                title: 'Enter Template information',
+                w: 400,
+                h: 500,
+                data: {
+                    categoryId: categoryId
+                }
+            })
+        }
+    })
+}
+
+function displayTemplateFields(elem) {
+
+    let context = 'TemplateFields'
+    let templateId = getRowKeyFieldValue(elem);
+    let templateName = getRowValueByColumnName(elem, 'Name');
+
+    gridPop({
+        context: context,
+        type: 'horizontal',
+        title: `${templateName}`,
+        w: RelativePixels('w', .9),
+        h: RelativePixels('h', .75),
+        data: {
+            Template_ID: templateId
+        },
+        afterLoad: function (elem) {
+            attachOnDragListenersToGrid()
+        },
+        buttons: {
+            'Close': {
+                text: 'Close',
+                priority: 'primary',
+                style: 'background: #428BCA; color: #fff;',
+                click: function () {
+                    // save scroll position
+                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+                    // apply filters
+                    gridApplyFilters();
+                }
+            }
+        }
+    });
+
+    function drag(ev) {
+        var rowKfv = $(ev.target).closest('tr').attr('kfv')
+        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
+        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
+
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
+        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+
+        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+
+        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
+
+        var jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "UpdateTemplateFieldSortOrder",
+            fid: draggedRowKfv,
+            newso: rowNewSortOrder - 50,
+        })
+            .done(function (data) {
+                $(`#butRefresh${context}`).click();
+            }).fail(function (data) {
+                alert("Update failed.");
+            });
+
+
+    }
+
+    function attachOnDragListenersToGrid() {
+        $('#diaTemplateFields').on("dragstart", function (ev) {
+            drag(ev)
+        })
+
+        $('#diaTemplateFields').on("dragover", function (ev) {
+            ev.preventDefault()
+        })
+
+        $('#diaTemplateFields').on("drop", function (ev) {
+            drop(ev)
+        })
+    }
+
+}
+
+function _displayTemplateCategories(elem) {
+    let templateId = getRowKeyFieldValue(elem);
+    let templateName = getRowValueByColumnName(elem, 'Name');
+
+    gridPop({
+        context: `TemplateCategories`,
+        type: 'horizontal',
+        title: `${templateName} Categories`,
+        w: 400,
+        h: 800,
+        data: {
+            Template_ID: templateId
+        },
+        afterSave: function () {
+            ReloadPage();
+        }
+    })
+}
+
+function _displayChoicesEditor(elem, event) {
+
+    let fieldId = getRowKeyFieldValue(elem);
+    let fieldName = getRowValueByColumnName(elem, 'Field');
+    closeDialogFromContext('TemplateFields');
+
+    gridPop({
+        context: 'FieldChoices',
+        type: 'horizontal',
+        title: `${fieldName} Field`,
+        w: 1200,
+        h: 600,
+        data: {
+            Template_Field_ID: fieldId
+        }
+    })
+
+}
+
+function _attachOnChangeToTypeSelect() {
+    let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
+    $("#selFieldType").on('change', (event) => {
+        jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "IsAChoiceField",
+            selectedValueId: event.target.value
+        }).done(function (res) {
+            if (res.isAChoiceField === "True") {
+                let choicesLink = createTag({
+                    tagName: 'a', tagTextContent: 'Edit Choices',
+                    attributes: {
+                        'href': '#',
+                        'onclick': 'displayChoicesEditor(this, event)'
+                    },
+                });
+                $(rowChoicesElement).html(choicesLink);
+            } else {
+                $(rowChoicesElement).html('Field type does not have choices');
+            }
+        });
+    })
 }
