@@ -3,7 +3,8 @@ function previewForm(elem) {
 
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
-    let context = templateName.replace(/ /g, '') + '-' + 'TestForm';
+    let formId = -1;
+    let context = 'form';
 
 
     gridPop({
@@ -13,8 +14,8 @@ function previewForm(elem) {
         w: RelativePixels('w', 1, 550),
         h: RelativePixels('h', 0.85),
         data: {
-            context: context,
-            fid: templateId
+            ftid: templateId,
+            fid: formId
         },
         afterLoad: function (elem) {
         },

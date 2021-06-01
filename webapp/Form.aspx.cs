@@ -17,11 +17,24 @@ public partial class Form : System.Web.UI.Page
         DataTableCollection dtc = null;
         StringBuilder sb = new StringBuilder();
 
-        string FormTemplateID = gc.Req("fid");
-        string context = gc.Req("context");
+        string FormTemplateID = gc.Req("ftid");
+        string FormID = gc.Req("fid");
 
 
-        dtc = gc.GetTables($"exec dcr_sp_form {FormTemplateID}");
+        dtc = gc.GetTables($"exec dcr_sp_form {Session["UserID"].ToString()},{Session["UserGroupID"].ToString()},{FormID},{FormTemplateID}");
+        dt = dtc[0];
+
+        string FormSQL = dt.Rows[0]["Form_SQL"].ToString();
+        string FormLabels = dt.Rows[0]["Form_Labels"].ToString();
+        string FormRequired = dt.Rows[0]["Form_Required"].ToString();
+        string FormTemplates = dt.Rows[0]["Form_Templates"].ToString();
+
+        vgForm.GridTable = gc.GetTable(FormSQL);
+        vgForm.Labels = FormLabels;
+        vgForm.Required = FormRequired;
+        vgForm.Templates = FormTemplates;
+
+        /*
         dt = dtc[0];
 
         Response.Write("<a href='#' onclick=\"gridPop({type: 'docs', element: this, context: 'Test', contextID: 1, title: 'Test Docs', w: 1200, h: 600 });\">None</a></br>");
@@ -42,6 +55,7 @@ public partial class Form : System.Web.UI.Page
         sb.AppendLine(currentRenderer.Draw(dataFields));
         Literal1.Text = sb.ToString();
         }
+        */
     }
 
     private IRenderer MapTypeToInputRenderer(string type)
