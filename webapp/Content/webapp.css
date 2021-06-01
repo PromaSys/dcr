@@ -12,3 +12,8 @@
 .bold {
    font-weight: 600;
 }
+
+.multi-select {
+    height: 150px;
+    overflow: auto;
+}

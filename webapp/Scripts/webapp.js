@@ -8,7 +8,7 @@ function previewForm(elem) {
 
     gridPop({
         context: context,
-        load: 'Form_Test',
+        load: 'Form.aspx',
         title: `${templateName} Form Demo`,
         w: RelativePixels('w', 1, 550),
         h: RelativePixels('h', 0.85),

@@ -8,7 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebApp.App_Code;
 
-public partial class Form_Test : System.Web.UI.Page
+public partial class Form : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -24,6 +24,9 @@ public partial class Form_Test : System.Web.UI.Page
         dtc = gc.GetTables($"exec dcr_sp_form {FormTemplateID}");
         dt = dtc[0];
 
+        Response.Write("<a href='#' onclick=\"gridPop({type: 'docs', element: this, context: 'Test', contextID: 1, title: 'Test Docs', w: 1200, h: 600 });\">None</a></br>");
+        Response.Write("<asp:TextBox runat=\"server\"></asp:TextBox></br>");
+
         IRenderer currentRenderer;
 
         foreach (DataRow row in dt.Rows)
@@ -37,7 +40,7 @@ public partial class Form_Test : System.Web.UI.Page
             {"Required", row["Required"].ToString()}
         };
         sb.AppendLine(currentRenderer.Draw(dataFields));
-        Form.Text = $@"<form id='{context}'>{sb}</div>";
+        Literal1.Text = sb.ToString();
         }
     }
 
@@ -183,13 +186,14 @@ public partial class Form_Test : System.Web.UI.Page
         public string Draw(Dictionary<string, string> DataFields)
         {
             options = buildOptions(DataFields["Choices"]);
-
+            options = options + options + options + options;
+            options = options + options;
             return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
                         <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <div class='multi-select-wrapper'>
+                        <div class='multi-select-wrapper multi-select d-flex flex-column'>
                             {options}
                         </div>
                      </div>";
