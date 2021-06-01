@@ -29,6 +29,7 @@ public partial class Form_Test : System.Web.UI.Page
                 {"TemplateFieldId", row["Template_Field_ID"].ToString()},
                 {"FieldName", row["Field"].ToString()},
                 {"FieldDescription", row["Template_Field_Description"].ToString()},
+                {"Choices", row["Choices"].ToString()},
                 {"Required", row["Required"].ToString()}
             };
             sb.AppendLine(currentRenderer.Draw(dataFields));
@@ -147,21 +148,34 @@ public partial class Form_Test : System.Web.UI.Page
 
     public class SelectInput : IRenderer
     {
+        string options { get; set; }
         public string Draw(Dictionary<string, string> DataFields)
         {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+            options = buildOptions(DataFields["Choices"]);
+
             return $@"<div class='mb-3'>
                         <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <select class='form-control' id='exampleFormControlSelect2'>
-                            <option> 1 </option>
-                            <option> 2 </option>
-                            <option> 3 </option>
-                            <option> 4 </option>
-                            <option> 5 </option>
+                        <select class='form-control' id='exampleFormControlSelect2' {isRequired}>
+                            {options}
                         </select>
                      </div>";
+        }
+
+        private string buildOptions(string choices)
+        {
+            List<string> optionsList = new List<string>(
+                choices.Split(new string[] { "<br>" }, StringSplitOptions.None));
+
+            StringBuilder options = new StringBuilder();
+            foreach (string option in optionsList)
+            {
+                options.AppendLine($"<option value={option}>{option}</option>");
+            }
+            return options.ToString();
         }
     }
 
