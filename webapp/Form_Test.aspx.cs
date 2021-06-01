@@ -55,6 +55,10 @@ public partial class Form_Test : System.Web.UI.Page
                 return new BooleanInput();
             case "Choice (single)":
                 return new SelectInput();
+            case "Choice (multiple)":
+                return new MultipleSelectInput();
+            case "Files":
+                return new FileInput();
             default:
                 return new TextInput();
         }
@@ -179,4 +183,56 @@ public partial class Form_Test : System.Web.UI.Page
         }
     }
 
+    public class MultipleSelectInput : IRenderer
+    {
+        string options { get; set; }
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+            options = buildOptions(DataFields["Choices"]);
+
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <div class='multi-select-wrapper'>
+                            {options}
+                        </div>
+                     </div>";
+        }
+
+        private string buildOptions(string choices)
+        {
+            List<string> optionsList = new List<string>(
+                choices.Split(new string[] { "<br>" }, StringSplitOptions.None));
+
+            StringBuilder options = new StringBuilder();
+            foreach (string option in optionsList)
+            {
+                string checkbox = $@"<div class='form-check form-check-inline'>
+                                        <input class='form-check-input' type='checkbox' id='{option}' value='{option}'/>
+                                        <label class='form-check-label' for='{option}'>{option}</label>
+                                     </div>";
+                options.AppendLine($"{checkbox}");
+            }
+            return options.ToString();
+        }
+    }
+
+    public class FileInput : IRenderer
+    {
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <input type='file' class='form-control-file' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                    </div>";
+        }
+    }
 };

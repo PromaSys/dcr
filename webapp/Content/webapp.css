@@ -1,3 +1,10 @@
 ﻿#template-form-wrapper {
     margin: 1rem 2rem;
 }
+
+.multi-select-wrapper {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
