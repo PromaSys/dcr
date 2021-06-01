@@ -116,9 +116,15 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            return $@"<div class='form-group form-check'>
+            return $@"<div class='form-group form-check d-flex flex-row align-items-center'>
                         <input type = 'checkbox' class='form-check-input' id='{DataFields["FieldName"]}'>
-                        <label class='form-check-label' for='{DataFields["FieldName"]}'>{DataFields["FieldName"]}</label>
+                        <label class='form-check-label' for='{DataFields["FieldName"]}'>
+                            <span class='d-flex flex-row align-items-baseline'>
+                                {DataFields["FieldName"]}
+                                &nbsp
+                                <small class='form-text text-muted'>{DataFields["FieldDescription"]}.</small>
+                            </span>
+                        </label>
                       </div>";
         }
     }
