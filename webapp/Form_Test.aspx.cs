@@ -43,6 +43,17 @@ public partial class Form_Test : System.Web.UI.Page
         {
             case "Text 100 characters":
                 return new TextInput();
+            case "Text 4000 characters":
+                return new TextAreaInput();
+            case "Number":
+            case "Money":
+                return new NumberInput();
+            case "Date":
+                return new DateInput();
+            case "Yes/No":
+                return new BooleanInput();
+            case "Choice (single)":
+                return new SelectInput();
             default:
                 return new TextInput();
         }
@@ -57,12 +68,14 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+
             return $@"<div class='mb-3'>
                         <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
                             {DataFields["FieldName"]}
                             <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
                         </label>
-                        <input type='text' class='form-control' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {(DataFields["Required"] == "1" ? "required" : null)}/>
+                        <input type='text' class='form-control' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
                     </div>";
         }
     }
@@ -71,7 +84,78 @@ public partial class Form_Test : System.Web.UI.Page
     {
         public string Draw(Dictionary<string, string> DataFields)
         {
-            return "This is a number input";
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <input type='number' class='form-control' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                    </div>";
+        }
+    }
+
+    public class TextAreaInput : IRenderer
+    {
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <textarea class='form-control' id='{DataFields["FieldName"]}' rows='3' {isRequired}></textarea>
+                     </div>";
+        }
+    }
+
+    public class BooleanInput : IRenderer
+    {
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            return $@"<div class='form-group form-check'>
+                        <input type = 'checkbox' class='form-check-input' id='{DataFields["FieldName"]}'>
+                        <label class='form-check-label' for='{DataFields["FieldName"]}'>{DataFields["FieldName"]}</label>
+                      </div>";
+        }
+    }
+
+    public class DateInput : IRenderer
+    {
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            string isRequired = DataFields["Required"] == "1" ? "required" : null;
+
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <input type='date' class='form-control datepicker' id='{DataFields["FieldName"]}' fid='{DataFields["TemplateFieldId"]}' {isRequired}/>
+                    </div>";
+        }
+    }
+
+    public class SelectInput : IRenderer
+    {
+        public string Draw(Dictionary<string, string> DataFields)
+        {
+            return $@"<div class='mb-3'>
+                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between'>
+                            {DataFields["FieldName"]}
+                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
+                        </label>
+                        <select class='form-control' id='exampleFormControlSelect2'>
+                            <option> 1 </option>
+                            <option> 2 </option>
+                            <option> 3 </option>
+                            <option> 4 </option>
+                            <option> 5 </option>
+                        </select>
+                     </div>";
         }
     }
 
