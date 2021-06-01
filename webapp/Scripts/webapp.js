@@ -244,13 +244,11 @@ function handleSelection(e) {
         var allCheckboxes = getAllCheckboxes()
         var allCheckboxSelected = getAllCheckBox().checked
 
-        if (allCheckboxSelected && targetIsAllCheckbox) {
-            setCheckboxesState(allCheckboxes, true)
-        }
-        else if (!allCheckboxSelected && targetIsAllCheckbox) {
+        if (targetIsAllCheckbox) {
             setCheckboxesState(allCheckboxes, false)
+            target.checked = true
         }
-        else if (allCheckboxSelected && !targetIsAllCheckbox) {
+        if (allCheckboxSelected && !targetIsAllCheckbox) {
             allCheckboxes.each((index, checkbox) => {
                 if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
                     checkbox.checked = false
