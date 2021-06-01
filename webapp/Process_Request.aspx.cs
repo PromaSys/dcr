@@ -424,6 +424,22 @@ public partial class Process_Request : System.Web.UI.Page
 
                     Response.Write("{\"isAChoiceField\": \"" + ((valueId == 6 || valueId == 7) ? true : false) + "\", \"messagetype\": \"success\"}");
                 }
+                else if (RequestAction == "UpdateTemplateFieldSortOrder")
+                {
+                    try
+                    {
+                        var Template_Field_ID = gc.TryDecrypt(req["fid"]);
+                        var New_Sort_Order = gc.TryDecrypt(req["newso"]);
+                        gc.ExecuteSQL("update dcr_Form_Template_Fields set Sort_Order=" + New_Sort_Order + " where Template_Field_ID=" + Template_Field_ID);
+                        Response.Write("{\"message\": \"Success\", \"messagetype\": \"success\"}");
+
+                    }
+                    catch (Exception Ex)
+                    {
+                        Response.Write("{\"message\": \"" + Ex.Message + "\", \"messagetype\": \"danger\"}");
+                    }
+                }
+
             }
 
             dt.Dispose();

@@ -27,17 +27,21 @@ function _createTemplate() {
 
 function displayTemplateFields(elem) {
 
+    let context = 'TemplateFields'
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
 
     gridPop({
-        context: `TemplateFields`,
+        context: context,
         type: 'horizontal',
         title: `${templateName}`,
         w: RelativePixels('w', .9),
         h: RelativePixels('h', .75),
         data: {
             Template_ID: templateId
+        },
+        afterLoad: function (elem) {
+            attachOnDragListenersToGrid()
         },
         buttons: {
             'Close': {
@@ -47,17 +51,58 @@ function displayTemplateFields(elem) {
                 click: function () {
                     // save scroll position
                     SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
-
                     // apply filters
                     gridApplyFilters();
-
-                    //$('#diaTemplateFields').dialog('destroy').remove();
-                    //ReloadPage();
-
                 }
             }
         }        
     });
+
+    function drag(ev) {
+        var rowKfv = $(ev.target).closest('tr').attr('kfv')
+        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
+        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
+
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
+        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+
+        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+
+        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
+
+        var jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "UpdateTemplateFieldSortOrder",
+            fid: draggedRowKfv,
+            newso: rowNewSortOrder - 50,
+        })
+        .done(function (data) {
+            $(`#butRefresh${context}`).click();
+        }).fail(function (data) {
+         alert("Update failed.");
+        });
+
+        
+    }
+
+    function attachOnDragListenersToGrid() {
+        $('#diaTemplateFields').on("dragstart", function (ev) {
+            drag(ev)
+        })
+
+        $('#diaTemplateFields').on("dragover", function (ev) {
+            ev.preventDefault()
+        })
+
+        $('#diaTemplateFields').on("drop", function (ev) {
+            drop(ev)
+        })
+    }
+
 }
 
 function _displayTemplateCategories(elem) {
@@ -121,65 +166,6 @@ function _attachOnChangeToTypeSelect() {
     })
 }
 
-function attachOnChangeToMultiselect() {
-
-    $('#selCategories').change(function(e){
-        handleSelection(e)
-    })
-}
-
-function handleSelection(e) {
-    var target = getEventTarget(e);
-    if (target.tagName.toLowerCase() === 'input') {
-        var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
-        var allCheckboxes = getAllCheckboxes()
-        var allCheckboxSelected = getAllCheckBox().checked
-
-        if (allCheckboxSelected && targetIsAllCheckbox) {
-            setCheckboxesState(allCheckboxes, true)
-        }
-        else if (!allCheckboxSelected && targetIsAllCheckbox) {
-            setCheckboxesState(allCheckboxes, false)
-        }
-        else if (allCheckboxSelected && !targetIsAllCheckbox) {
-            allCheckboxes.each((index, checkbox) => {
-                if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
-                    checkbox.checked = false
-            })
-            target.checked = true
-        }
-    }
-}
-
-function setCheckboxesState(checkboxes, state) {
-    checkboxes.each((index, checkbox) => {
-        checkbox.checked = state;
-    })
-}
-
-function isAllCheckboxesChecked() {
-    var allAreChecked = true
-    getAllCheckboxes().each((index, checkbox) => {
-        if (checkbox.checked == false) {
-            allAreChecked = false
-        }        
-    })
-    return allAreChecked
-}
-
-function getAllCheckboxes() {
-    return $($("#selCategories")[0]).find('input')
-}
-
-function getAllCheckBox() {
-    return getAllCheckboxes()[0]
-}
-
-function getEventTarget(e) {
-    e = e || window.event;
-    return e.target || e.srcElement;
-}
-
 function vGridGetFieldValueByFieldName(fieldName) {
     let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
     return fieldElement.next().children(":first")[0];
@@ -222,7 +208,6 @@ function createTag(args) {
     return tag
 }
 
-
 function editTemplateField(elem) {
     gridEditorForm({
         element: elem,
@@ -243,4 +228,68 @@ function editTemplateField(elem) {
 
         }
     });
+}
+
+function attachOnChangeToMultiselect() {
+
+    $('#selCategories').change(function (e) {
+        handleSelection(e)
+    })
+}
+
+function handleSelection(e) {
+    var target = getEventTarget(e);
+    if (target.tagName.toLowerCase() === 'input') {
+        var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
+        var allCheckboxes = getAllCheckboxes()
+        var allCheckboxSelected = getAllCheckBox().checked
+
+        if (allCheckboxSelected && targetIsAllCheckbox) {
+            setCheckboxesState(allCheckboxes, true)
+        }
+        else if (!allCheckboxSelected && targetIsAllCheckbox) {
+            setCheckboxesState(allCheckboxes, false)
+        }
+        else if (allCheckboxSelected && !targetIsAllCheckbox) {
+            allCheckboxes.each((index, checkbox) => {
+                if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
+                    checkbox.checked = false
+            })
+            target.checked = true
+        }
+    }
+}
+
+function setCheckboxesState(checkboxes, state) {
+    checkboxes.each((index, checkbox) => {
+        checkbox.checked = state;
+    })
+}
+
+function isAllCheckboxesChecked() {
+    var allAreChecked = true
+    getAllCheckboxes().each((index, checkbox) => {
+        if (checkbox.checked == false) {
+            allAreChecked = false
+        }
+    })
+    return allAreChecked
+}
+
+function getAllCheckboxes() {
+    return $($("#selCategories")[0]).find('input')
+}
+
+function getAllCheckBox() {
+    return getAllCheckboxes()[0]
+}
+
+function getEventTarget(e) {
+    e = e || window.event;
+    return e.target || e.srcElement;
+}
+
+function getEventType(e) {
+    e = e || window.event;
+    return e.type || e.type;
 }
