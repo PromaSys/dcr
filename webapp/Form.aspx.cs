@@ -21,18 +21,30 @@ public partial class Form : System.Web.UI.Page
         string FormID = gc.Req("fid");
 
 
-        dtc = gc.GetTables($"exec dcr_sp_form {Session["UserID"].ToString()},{Session["UserGroupID"].ToString()},{FormID},{FormTemplateID}");
+        dtc = gc.GetTables($"exec dcr_sp_form {Session["UserID"].ToString()},{Session["UserGroupID"].ToString()}, 1, 1");
         dt = dtc[0];
 
         string FormSQL = dt.Rows[0]["Form_SQL"].ToString();
         string FormLabels = dt.Rows[0]["Form_Labels"].ToString();
         string FormRequired = dt.Rows[0]["Form_Required"].ToString();
         string FormTemplates = dt.Rows[0]["Form_Templates"].ToString();
+        string FormNumberFormat = dt.Rows[0]["Form_Number_Format"].ToString();
+        string FormTextAreas = dt.Rows[0]["Form_Text_Areas"].ToString();
+        string FormCalendars = dt.Rows[0]["Form_Calendars"].ToString();
+
+
 
         vgForm.GridTable = gc.GetTable(FormSQL);
         vgForm.Labels = FormLabels;
+        vgForm.Hide = "Template_Form_ID";
         vgForm.Required = FormRequired;
         vgForm.Templates = FormTemplates;
+        vgForm.Calendars = FormCalendars;
+        //vgForm.TextAreas = FormTextAreas;
+        vgForm.Chat = "fld_tf_3_ff_5|Test|Test_ID|800,600";
+        vgForm.Docs = "fld_tf_3_ff_5|Test|Test_ID|1000,400";
+        //vgForm.NumberFormat = FormNumberFormat;
+        vgForm.EncryptionKey = Application["EncryptionKey"].ToString();
 
         /*
         dt = dtc[0];

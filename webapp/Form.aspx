@@ -1,23 +1,24 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"  MasterPageFile="~/Site_No_Menu.master" CodeFile="Form.aspx.cs" Inherits="Form" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Form.aspx.cs" Inherits="Form" %>
 
+<!DOCTYPE html>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <vg:VGrid
+            ID="vgForm"
+            runat="server"
+            CssClass="table table-condensed table-borderless vg"
+            Edit=" true"
+            KeyField="Form_ID"
+            Table="dcr_Form_Fields"
+            Stacked="true" />
+    </form>
 
-    <vg:VGrid
-        ID ="vgForm"
-        runat="server" 
-        cssClass ="table table-condensed table-borderless vg"        
-        Edit =" true"    
-        KeyField = "Form_ID"
-        Table ="dcr_Form_Fields"
-        Stacked="true"
-        />
-
-    <!--
-    <div id="template-form-wrapper">
-        <asp:Literal ID="Literal1" runat="server" ClientIDMode="Static" />
-        <asp:TextBox runat="server"></asp:TextBox>
-    </div>
-    -->
-</asp:Content>
-
+    <script type="text/javascript">
+</script>
+</body>
+</html>

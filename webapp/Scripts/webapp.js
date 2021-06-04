@@ -16,28 +16,6 @@ function previewForm(elem) {
         data: {
             ftid: templateId,
             fid: formId
-        },
-        afterLoad: function (elem) {
-        },
-        buttons: {
-            'Close': {
-                text: 'Close',
-                priority: 'primary',
-                style: 'background: #428BCA; color: #fff;',
-                click: function () {
-                    let validInputs = validateFormInputs().isValid;
-                    if (validInputs) {
-                        SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
-                        gridApplyFilters();
-                    } else {
-                        gridBox({
-                            title: 'Validation: Required Field Empty',
-                            body: `You missed making an entry to a required field (${validateFormInputs().invalidFields[0]}).<br /><br />Please make an entry.`,
-                            type: 'info'
-                        })
-                    }
-                }
-            }
         }
     });
 
