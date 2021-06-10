@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -17,6 +17,7 @@ public partial class Form : System.Web.UI.Page
         DataTableCollection dtc = null;
         StringBuilder sb = new StringBuilder();
 
+        string Context = gc.Req("c");
         string FormTemplateID = gc.Req("ftid");
         string FormID = gc.Req("fid");
 
@@ -28,220 +29,26 @@ public partial class Form : System.Web.UI.Page
         string FormLabels = dt.Rows[0]["Form_Labels"].ToString();
         string FormRequired = dt.Rows[0]["Form_Required"].ToString();
         string FormTemplates = dt.Rows[0]["Form_Templates"].ToString();
+        string FormNumberFormat = dt.Rows[0]["Form_Number_Format"].ToString();
+        string FormTextAreas = dt.Rows[0]["Form_Text_Areas"].ToString();
+        string FormCalendars = dt.Rows[0]["Form_Calendars"].ToString();
+        string FormDocs = dt.Rows[0]["Form_Docs"].ToString();
+        string FormDoNotEdit = dt.Rows[0]["Form_DoNotEdit"].ToString();
+        string FormLinks = dt.Rows[0]["Form_Links"].ToString();
+
+        vgForm.Hide = "Template_Form_ID|Form_ID";
+        vgForm.ID = Context;
 
         vgForm.GridTable = gc.GetTable(FormSQL);
         vgForm.Labels = FormLabels;
         vgForm.Required = FormRequired;
         vgForm.Templates = FormTemplates;
 
-        /*
-        dt = dtc[0];
-
-        Response.Write("<a href='#' onclick=\"gridPop({type: 'docs', element: this, context: 'Test', contextID: 1, title: 'Test Docs', w: 1200, h: 600 });\">None</a></br>");
-        Response.Write("<asp:TextBox runat=\"server\"></asp:TextBox></br>");
-
-        IRenderer currentRenderer;
-
-        foreach (DataRow row in dt.Rows)
-        {
-            currentRenderer = MapTypeToInputRenderer(row["Type"].ToString());
-            var dataFields = new Dictionary<string, string>(){
-            {"TemplateFieldId", row["Template_Field_ID"].ToString()},
-            {"FieldName", row["Field"].ToString()},
-            {"FieldDescription", row["Template_Field_Description"].ToString()},
-            {"Choices", row["Choices"].ToString()},
-            {"Required", row["Required"].ToString()}
-        };
-        sb.AppendLine(currentRenderer.Draw(dataFields));
-        Literal1.Text = sb.ToString();
-        }
-        */
+        vgForm.NumberFormat = FormNumberFormat;
+        vgForm.TextAreas = FormTextAreas;
+        vgForm.Calendars = FormCalendars;
+        //vgForm.Docs = FormDocs;
+        vgForm.DoNotEdit = FormDoNotEdit;
+        vgForm.Links = FormLinks;
     }
-
-    private IRenderer MapTypeToInputRenderer(string type)
-    {
-        switch (type)
-        {
-            case "Text 100 characters":
-                return new TextInput();
-            case "Text 4000 characters":
-                return new TextAreaInput();
-            case "Number":
-            case "Money":
-                return new NumberInput();
-            case "Date":
-                return new DateInput();
-            case "Yes/No":
-                return new BooleanInput();
-            case "Choice (single)":
-                return new SelectInput();
-            case "Choice (multiple)":
-                return new MultipleSelectInput();
-            case "Files":
-                return new FileInput();
-            default:
-                return new TextInput();
-        }
-    }
-
-    interface IRenderer
-    {
-        string Draw(Dictionary<string, string> DataFields);
-    }
-
-    public class TextInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <input type='text' class='form-control form-input' id='{DataFields["FieldName"]}' />
-                    </div>";
-        }
-    }
-
-    public class NumberInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <input type='number' class='form-control form-input' id='{DataFields["FieldName"]}'/>
-                    </div>";
-        }
-    }
-
-    public class TextAreaInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <textarea class='form-control form-input' id='{DataFields["FieldName"]}' rows='3'></textarea>
-                     </div>";
-        }
-    }
-
-    public class BooleanInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='form-group form-check d-flex flex-row align-items-center form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <input type = 'checkbox' class='form-check-input form-input' id='{DataFields["FieldName"]}'>
-                        <label class='form-check-label' for='{DataFields["FieldName"]}'>
-                            <span class='d-flex flex-row align-items-baseline bold'>
-                                {DataFields["FieldName"]}
-                                &nbsp
-                                <small class='form-text text-muted'>{DataFields["FieldDescription"]}.</small>
-                            </span>
-                        </label>
-                      </div>";
-        }
-    }
-
-    public class DateInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <input type='date' class='form-control datepicker form-input' id='{DataFields["FieldName"]}'/>
-                    </div>";
-        }
-    }
-
-    public class SelectInput : IRenderer
-    {
-        string options { get; set; }
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            options = buildOptions(DataFields["Choices"]);
-
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <select class='form-control form-input' id='exampleFormControlSelect2'>
-                            {options}
-                        </select>
-                     </div>";
-        }
-
-        private string buildOptions(string choices)
-        {
-            List<string> optionsList = new List<string>(
-                choices.Split(new string[] { "<br>" }, StringSplitOptions.None));
-
-            StringBuilder options = new StringBuilder();
-            foreach (string option in optionsList)
-            {
-                options.AppendLine($"<option value={option}>{option}</option>");
-            }
-            return options.ToString();
-        }
-    }
-
-    public class MultipleSelectInput : IRenderer
-    {
-        string options { get; set; }
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            options = buildOptions(DataFields["Choices"]);
-            options = options + options + options + options;
-            options = options + options;
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <div class='multi-select-wrapper multi-select d-flex flex-column'>
-                            {options}
-                        </div>
-                     </div>";
-        }
-
-        private string buildOptions(string choices)
-        {
-            List<string> optionsList = new List<string>(
-                choices.Split(new string[] { "<br>" }, StringSplitOptions.None));
-
-            StringBuilder options = new StringBuilder();
-            foreach (string option in optionsList)
-            {
-                string checkbox = $@"<div class='form-check form-check-inline'>
-                                        <input class='form-check-input form-input' type='checkbox' id='{option}' value='{option}'/>
-                                        <label class='form-check-label' for='{option}'>{option}</label>
-                                     </div>";
-                options.AppendLine($"{checkbox}");
-            }
-            return options.ToString();
-        }
-    }
-
-    public class FileInput : IRenderer
-    {
-        public string Draw(Dictionary<string, string> DataFields)
-        {
-            return $@"<div class='mb-3 form-input-wrapper' fr='{DataFields["Required"]}' fid='{DataFields["TemplateFieldId"]}'>
-                        <label for='{DataFields["FieldName"]}' class='form-label d-flex flex-row align-items-baseline justify-content-between bold'>
-                            {DataFields["FieldName"]}
-                            <div class='form-text text-muted'>{DataFields["FieldDescription"]}.</div>
-                        </label>
-                        <input type='file' class='form-control-file form-input' id='{DataFields["FieldName"]}'/>
-                    </div>";
-        }
-    }
-};
+}

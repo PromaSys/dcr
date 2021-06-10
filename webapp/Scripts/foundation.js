@@ -170,7 +170,7 @@ $(document).ready(function () {
     });
 
     // highlight active menu
-    
+
     if ($('.nav-item').length > 0) { //bootstrap 4
         // remove active class
         $('.nav-item').removeClass('active');
@@ -179,7 +179,7 @@ $(document).ready(function () {
         $('.nav-item a[href="' + page + '"]').addClass('active');
     }
     else {
-        
+
         $('.active').hide();
         var hash = window.location.pathname.split("/").pop();
 
@@ -189,7 +189,7 @@ $(document).ready(function () {
             selectedTab.addClass("activetab");
         }
     }
-    
+
 
     // support filters
     $('.hg').each(function () {
@@ -218,9 +218,9 @@ $(document).ready(function () {
 
     // highlight finds
     if (pageSearch != null) {
-    $('.hg tbody:last tr td:not(:has("a"))').each(function () {
-        $(this).html($(this).html().replace(new RegExp(pageSearch, 'ig'), '<span class="searchterm">$&</span>'));
-    });
+        $('.hg tbody:last tr td:not(:has("a"))').each(function () {
+            $(this).html($(this).html().replace(new RegExp(pageSearch, 'ig'), '<span class="searchterm">$&</span>'));
+        });
     }
 
 
@@ -252,8 +252,7 @@ $(document).ready(function () {
     // hg vertical scroll top
     var st = GetCookie('hgScrollTop');
     if (st != null && st != 'undefined') {
-        //document.getElementById("divBody").scrollTop = st;
-        $('.tablediv').scrollTop(st);
+        document.getElementById("divBody").scrollTop = st;
         SetCookie('hgScrollTop', 0, -1);
 
         var kfv = GetCookie('hgHighlightedID');
@@ -345,22 +344,19 @@ function ScaleMenu() {
 }
 
 //#region update hg changes
-function GridRowClicked(e, gid, r)
-{
+function GridRowClicked(e, gid, r) {
     if (e.innerHTML.toString().toLowerCase().indexOf("input") > -1) return false;
 
     //get row being edited
     var re = $("table[id*=" + gid + "] tbody tr input").first();
     var reindex;
 
-    if (re.length == 1)
-    {
+    if (re.length == 1) {
         reindex = re[0].parentNode.parentNode.rowIndex;
 
         __doPostBack('ctl00$MainContent$' + gid, 'Update$' + r);
     }
-    else
-    {
+    else {
         __doPostBack('ctl00$MainContent$' + gid, 'Edit$' + r);
     }
 
@@ -454,8 +450,7 @@ function GetResultCheckBox(e) {
         result = "✓";
         resultkey = "1";
     }
-    else
-    {
+    else {
         //result = "☐"; //"&#9744;";
         result = "";
         resultkey = "0";
@@ -613,8 +608,7 @@ function hgEdit(e) {
                 else if (ftp.indexOf("template='multipleselect'") > -1) {
                     //ftpAttr += "onchange='GetResultMultiSelect(this);' ";
                     var values = $(this).attr('key').split(", ");
-                    for (var i = 0; i < values.length; i++)
-                    {
+                    for (var i = 0; i < values.length; i++) {
                         ftp = ftp.replace("value='" + values[i] + "'", "value='" + values[i] + "' checked");
                     }
                     ftp = ftp.replace(/value=/gi, " _onclick='GetResultMultiSelect(this);' value=");
@@ -831,6 +825,7 @@ function gridPop(o) {
         w: RelativePixels('w', .7, 1000),
         h: RelativePixels('w', .6, 500),
         readOnly: // 1 for readOnly, blank or any other value for edit
+        minimal: // applies to docs, one column
         title: 'Test',
         load: 'dialog.aspx', // page, default: Dialog.aspx
         data: {Test_}, // JSON, post data
@@ -838,7 +833,6 @@ function gridPop(o) {
         buttonsInTitle: , // true/false, default false
         saveFunction: ,// default function save grid, update interface, remove dialog
         afterSave: // function
-        afterLoad: // function that executes after the dialog has loaded
     });
     */
 
@@ -995,11 +989,6 @@ function gridPop(o) {
 
     dialogP.dialog("open");
 
-
-    if (typeof o.afterLoad != 'undefined') {
-        o.afterLoad(o.element);
-    }
-
     if (o.buttonsInTitle) {
         CloneButtonsInTitle('dia' + o.context);
     }
@@ -1007,6 +996,18 @@ function gridPop(o) {
     return false;
 }
 
+function gridPopDocs(context, contextId, xOffset, yOffset, width, height, elem, minimal, readonly) {
+    gridPop({
+        type: 'docs',
+        context: context,
+        contextID: contextId,
+        w: width,
+        h: height,
+        element: elem,
+        m: minimal, //single column
+        ro: readonly
+    });
+}
 
 function gridPopS(context, type, title, data, w, h, load, saveFunction) {
     // context is the case statement that will be executed in Dialog.cs
@@ -1033,6 +1034,11 @@ function gridValidate(o) {
         oninvalid: // function
     });
     */
+
+    // pad id with tab if missing
+    if (o.id.indexOf('tab') == -1) {
+        o.id = 'tab' + o.id;
+    }
 
     var gridid = o.id;
     var gasOverride = o.gasOverride;
@@ -1367,39 +1373,39 @@ function gridSave(o) {
     }
 
     if (!gasOverride) {
-    gridValidate({
-        id: o.id,
-        onvalid: function (changes) {
+        gridValidate({
+            id: o.id,
+            onvalid: function (changes) {
                 // save if gas = 1 or gasOverride
                 if (gas == '1' && !gasOverride) {
-            gridPostChanges({
-                changes: changes,
-                success: function (response) {
-                    var r = response.split('|');
-                    if (r[0] == 'Error') {
-                        //WaitBoxClose();                        //WaitBoxClose();
-                        gridBox({ closeBox: true });
-                        //MessageBox("Error Saving Data", response.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
-                        gridBox({ type: "message", title: "Error Saving Data", body: response.replace('Error|', '') + "<br /><br />Please edit or cancel.", type: "danger" });
-                        return false;
-                    }
-                    else {
-                        if (typeof (o.afterSave) == 'function') {
-                            o.afterSave(response);
+                    gridPostChanges({
+                        changes: changes,
+                        success: function (response) {
+                            var r = response.split('|');
+                            if (r[0] == 'Error') {
+                                //WaitBoxClose();                        //WaitBoxClose();
+                                gridBox({ closeBox: true });
+                                //MessageBox("Error Saving Data", response.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
+                                gridBox({ type: "message", title: "Error Saving Data", body: response.replace('Error|', '') + "<br /><br />Please edit or cancel.", type: "danger" });
+                                return false;
+                            }
+                            else {
+                                if (typeof (o.afterSave) == 'function') {
+                                    o.afterSave(response);
+                                }
+                                else {
+                                    return true;
+                                }
+                            }
+                        },
+                        error: function (response) {
+                            //WaitBoxClose();
+                            gridBox({ closeBox: true });
+                            //MessageBox("Error Saving Data", response.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
+                            gridBox({ type: "message", title: "Error Saving Data", body: response.replace('Error|', '') + "<br /><br />Please edit or cancel.", type: "danger" });
+                            return false;
                         }
-                        else {
-                            return true;
-                        }
-                    }
-                },
-                error: function (response) {
-                    //WaitBoxClose();
-                    gridBox({ closeBox: true });
-                    //MessageBox("Error Saving Data", response.replace('Error|', '') + "<br /><br />Please edit or cancel.", "danger");
-                    gridBox({ type: "message", title: "Error Saving Data", body: response.replace('Error|', '') + "<br /><br />Please edit or cancel.", type: "danger" });
-                    return false;
-                }
-            });
+                    });
                 } else {
                     if (typeof (o.afterSave) == 'function') {
                         o.afterSave();
@@ -1408,11 +1414,11 @@ function gridSave(o) {
                         return true;
                     }
                 }
-        },
-        oninvalid: function () {
-            return false;
-        }
-    });
+            },
+            oninvalid: function () {
+                return false;
+            }
+        });
     } else {
 
         //hide as we iterate through rows
@@ -1879,46 +1885,37 @@ function gridEditorForm(o) {
                 },
                 'Save': {
                     text: 'Save', priority: 'primary', style: 'background: #428BCA; color: #fff;', kfv: key, click: function () {
-                        
                         gridSave({
                             id: TableID,
                             afterSave: function () {
 
-                                if (typeof o.afterSave == 'function') {
-                                    o.afterSave(this);
-                                    return;
+                                // update interface
+                                var results = $('.hgeditformtable .hgResult');
+                                var kfv = $('.hgeditformtable').attr('kfv');
+
+                                $hgTDs = $('#' + TableID + ' tr[kfv="' + kfv + '"]').children('td');
+
+                                if (results != null) {
+                                    results.each(function () {
+                                        var TDIndex = $(this).attr('tdo');
+                                        $hgTD = $hgTDs.eq(TDIndex);
+                                        $hgTD.attr('key', $(this).attr('resultkey'));
+                                        var link = $hgTD.find('a');
+                                        if (link.length == 1) {
+                                            link.html($(this).attr('result'));
+                                        }
+                                        else {
+                                            $hgTD.html($(this).attr('result'));
+                                        }
+                                    });
+                                    $('#diae' + TableID).dialog('destroy').remove();
                                 }
                                 else {
-                                    // update interface
-                                    var results = $('.hgeditformtable .hgResult');
-                                    var kfv = $('.hgeditformtable').attr('kfv');
-
-                                    $hgTDs = $('#' + TableID + ' tr[kfv="' + kfv + '"]').children('td');
-
-                                    if (results != null) {
-                                        results.each(function () {
-                                            var TDIndex = $(this).attr('tdo');
-                                            $hgTD = $hgTDs.eq(TDIndex);
-                                            $hgTD.attr('key', $(this).attr('resultkey'));
-                                            var link = $hgTD.find('a');
-                                            if (link.length == 1) {
-                                                link.html($(this).attr('result'));
-                                            }
-                                            else {
-                                                $hgTD.html($(this).attr('result'));
-                                            }
-                                        });
-                                        $('#diae' + TableID).dialog('destroy').remove();
-                                        ReloadPage();
-                                    }
-                                    else {
-                                        $('#diae' + TableID).dialog('destroy').remove();
-                                        ReloadPage();
-                                    }
+                                    $('#diae' + TableID).dialog('destroy').remove();
+                                    ReloadPage();
                                 }
                             }
                         });
-                        
                     }
                 }
             }
@@ -1947,7 +1944,7 @@ function gridEditorForm(o) {
 
 // creates new form for an hg
 function gridEditorFormNew(o) {
-    
+
     /* usage
         gridEditorFormNew({
             element: ,
@@ -2111,6 +2108,7 @@ function gridBox(o) {
     if (type == "success") { backgroundColor = '#5CB85C'; }
     if (type == "info") { backgroundColor = '#5BC0DE'; }
     if (type == "warning") { backgroundColor = '#F0AD4E'; }
+    if (type == "confirm") { backgroundColor = '#F0AD4E'; }
 
     if ($(window).innerWidth() < width) {
         width = $(window).innerWidth() * .9;
@@ -2184,7 +2182,7 @@ function gridBoxS(title, body, type, width) {
 
     // type | options: 'success', 'danger', 'info', 'warning'
 
-    type === null ? 'message' : type; 
+    type === null ? 'message' : type;
 
     width === null ? 400 : width;
 
@@ -2222,6 +2220,13 @@ function gridDocDialog(o) {
     }
     else {
         QS += '&ro=0';
+    }
+
+    if (o.minimal == '1') {
+        QS += '&m=1';
+    }
+    else {
+        QS += '&m=0';
     }
 
     //dialog = $("<div style='position:relative;'>").dialog({
@@ -2593,7 +2598,6 @@ function gridEdit(o) {
         gridRowEdit({ element: e });
     }
 
-    attachOnChangeToTypeSelect();
 }
 
 function gridRowPopFields(o) {
@@ -2614,7 +2618,7 @@ function gridRowPopFields(o) {
             $(this).attr('key', $(this).find('.hgResult').attr('resultkey'));
             $(this).html($(this).find('.hgResult').attr('result'));
         });
-    });    
+    });
 
     // edit new row
     $(e).addClass('RowEdit');
@@ -2751,6 +2755,33 @@ function gridRowPopFields(o) {
     // focus
     var $input = $(e).find('.datepicker,.hgResult,input').first().caretToEnd();
 
+}
+
+function gridReloadDialog(context, remeberVericalScroll) {
+
+    var $dia = $('#dia' + context);
+
+    var verticalScrolls = new Array();
+
+    if (remeberVericalScroll) {
+        // all hg elements with a vetical scroll
+        $dia.find('.tablediv').each(function () {
+            verticalScrolls.push($(this).scrollTop());
+        });
+    }
+
+    //$dia.load(u);
+    $('#butRefresh' + context).click();
+
+    if (remeberVericalScroll) {
+        WaitUntil(function () { return $dia.find('.tablediv').length > 0; }, function () {
+            $dia.find('.tablediv').each(function (index) {
+                $(this).scrollTop(verticalScrolls[index]);
+            });
+        });
+
+
+    }
 }
 
 function _gridRowEdit(o) {
@@ -2894,7 +2925,7 @@ function gridApplyFilters_(e, setFilters) {
     var filters = '';
     //iterate through filters
     $('.filter').each(function () {
-        filters += $(this).attr('id') + '|' + isNull($(this).val(),'') + '|';
+        filters += $(this).attr('id') + '|' + isNull($(this).val(), '') + '|';
     });
 
     if (filters != '') {
@@ -5159,33 +5190,6 @@ function ReloadPage() {
     location.href = url;
 }
 
-function gridReloadDialog(context, remeberVericalScroll) {
-
-    var $dia = $('#dia' + context);
-
-    var verticalScrolls = new Array();
-
-    if (remeberVericalScroll) {
-        // all hg elements with a vetical scroll
-        $dia.find('.tablediv').each(function () {
-            verticalScrolls.push($(this).scrollTop());
-        });
-    }
-
-    //$dia.load(u);
-    $('#butRefresh' + context).click();
-
-    if (remeberVericalScroll) {
-        WaitUntil(function () { return $dia.find('.tablediv').length > 0; }, function () {
-            $dia.find('.tablediv').each(function (index) {
-                $(this).scrollTop(verticalScrolls[index]);
-            });
-        });
-
-
-    }
-}
-
 function SetGridPage(p, c) {
     //GrayOut(true);
     SetCookie(c, p, 1);
@@ -6164,8 +6168,7 @@ function Search(s, ev) {
     else if (ev.keyCode != 13) {
         return;
     }
-    else
-    {
+    else {
         Search = s.value;
     }
 
@@ -6410,3 +6413,131 @@ function GetResultSignature(e) {
     e.setAttribute("result", result);
     //e.setAttribute("resultkey", result);
 }
+
+
+
+//#region Legacy
+function qstojson(qs) {
+
+    qs = unescape(qs);
+
+    try {
+        qs = decodeURI(qs);
+    }
+    catch (err) {
+        var a = 1;
+    }
+    //qs = decodeURI(unescape(qs));
+
+    if (qs.substring(0, 1) == '?') {
+        qs = qs.substring(1);
+    }
+
+    var pairs = qs.split('&');
+
+    var result = {};
+    pairs.forEach(function (pair) {
+        if (pair != '') {
+            pair = pair.replace('=', '&').split('&');
+            if (pair[0] == 'fd') {
+                result[pair[0]] = (pair[1] || '');
+            }
+            else {
+                result[pair[0]] = decodeURIComponent(pair[1] || '');
+            }
+        }
+    });
+
+    return JSON.parse(JSON.stringify(result));
+}
+
+function MessageBox(title, body, type, width, OKFunction, cancel) {
+
+    var noButtontext;
+    var NoFunction;
+
+    if (cancel != null) {
+        noButtonText = 'Cancel';
+    }
+
+    gridBox({
+        boxType: 'message',
+        title: title,
+        body: body,
+        type: type,
+        width: width,
+        yesButtonText: ' OK',
+        yesFunction: function () { OKFunction(); },
+        noButtonText: noButtonText
+    })
+}
+
+
+function PopDialog(dialogP, Context, my, at, of, w, h, Title, QS, load, aText, aFunction) {
+
+    QS = qstojson(QS);
+
+    gridPop({
+        context: Context,
+        type: 'horizontal',
+        title: Title,
+        data: QS,
+        load: load,
+        saveFunction: function () {
+            aFunction();
+        },
+        w: w,
+        h: h
+    })
+}
+
+function SaveGrid(id, cbParameters, cbFunctions) {
+    gridSave({
+        id: id,
+        afterSave: function () {
+            cbFunctions();
+        }
+    });
+}
+
+function PopChatDialog(Context, ContextID, x, y, w, h) {
+    gridPop({
+        type: 'chat',
+        context: Context,
+        contextID: ContextID,
+        w: w,
+        h: h
+    })
+}
+
+function PopDocDialog(Context, ContextID, x, y, w, h, e, m, ro) {
+    gridPop({
+        element: e,
+        type: 'docs',
+        context: Context,
+        contextID: ContextID,
+        w: w,
+        h: h,
+        minimal: m,
+        readOnly: ro
+    });
+}
+
+function hgConfirm(Body, YesFunction, Title, w, h, my, at, of) {
+    gridBox({
+        boxType: 'confirm',
+        body: Body,
+        title: Title,
+        w: w,
+        h: h,
+        my: my,
+        at: at,
+        of: of,
+        yesFunction: function () {
+            YesFunction();
+        },
+        yesButtonText: ' Yes ',
+        noButtonText: ' No '
+    });
+}
+//#endregion

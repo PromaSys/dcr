@@ -212,9 +212,10 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.Hide = "Template_Field_ID";
                     HGrid.Links = "Field|editTemplateField(this);";
                     HGrid.Calendars = "Date";
-                    HGrid.NewRecords = 5;
                     HGrid.TextAreas = "Choices|8";
                     HGrid.AddSQL = gc.TraceSQL() + "|Form_Template_ID|" + Template_ID;
+                    HGrid.DeleteColumn = true;
+                    HGrid.Widths = "";
                     break;
 
                 case "FieldChoices":
