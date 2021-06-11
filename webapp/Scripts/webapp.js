@@ -76,7 +76,7 @@ function templateFields(elem) {
     gridPop({
         context: context,
         type: 'horizontal',
-        title: `${templateName}`,
+        title: templateName,
         w: RelativePixels('w', .9),
         h: RelativePixels('h', .75),
         data: {
@@ -113,7 +113,7 @@ function templateFields(elem) {
         var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
         var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
 
-        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+        var firstElementInDraggedRow = $('tr[kfv=' + draggedRowKfv + ']').eq(1).first();
 
         //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
 
@@ -123,7 +123,7 @@ function templateFields(elem) {
             newso: rowNewSortOrder - 50,
         })
             .done(function (data) {
-                $(`#butRefresh${context}`).click();
+                $('#butRefresh${context}').click();
             }).fail(function (data) {
                 alert("Update failed.");
             });
@@ -235,13 +235,207 @@ function reportNew(elem) {
     gridEditorFormNew({ element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800) });
 }
 
-/*
+
+
+function attachOnChangeToMultiselect() {
+
+    $('#selCategories').change(function (e) {
+        handleSelection(e)
+    })
+}
+
+function handleSelection(e) {
+    var target = getEventTarget(e);
+    if (target.tagName.toLowerCase() === 'input') {
+        var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
+        var allCheckboxes = getAllCheckboxes()
+        var allCheckboxSelected = getAllCheckBox().checked
+
+        if (targetIsAllCheckbox) {
+            setCheckboxesState(allCheckboxes, false)
+            target.checked = true
+        }
+        if (allCheckboxSelected && !targetIsAllCheckbox) {
+            allCheckboxes.each((index, checkbox) => {
+                if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
+                    checkbox.checked = false
+            })
+            target.checked = true
+        }
+    }
+}
+
+function setCheckboxesState(checkboxes, state) {
+    checkboxes.each((index, checkbox) => {
+        checkbox.checked = state;
+    })
+}
+
+function getAllCheckboxes() {
+    return $($("#selCategories")[0]).find('input')
+}
+
+function getAllCheckBox() {
+    return getAllCheckboxes()[0]
+}
+
+function getEventTarget(e) {
+    e = e || window.event;
+    return e.target || e.srcElement;
+}
+
+function getEventType(e) {
+    e = e || window.event;
+    return e.type || e.type;
+}
+
+function _templateFields(elem) {
+
+    let context = 'TemplateFields'
+    let templateId = $(elem).closest('tr').attr('kfv');
+    let templateName = $(elem).closest('tr').find('td:first').text();
+
+    gridPop({
+        context: context,
+        type: 'horizontal',
+        title: '${templateName}',
+        w: RelativePixels('w', .9),
+        h: RelativePixels('h', .75),
+        data: {
+            Template_ID: templateId
+        },
+        afterLoad: function (elem) {
+            attachOnDragListenersToGrid()
+        },
+        buttons: {
+            'Close': {
+                text: 'Close',
+                priority: 'primary',
+                style: 'background: #428BCA; color: #fff;',
+                click: function () {
+                    // save scroll position
+                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+                    // apply filters
+                    gridApplyFilters();
+                }
+            }
+        }
+    });
+
+    function drag(ev) {
+        var rowKfv = $(ev.target).closest('tr').attr('kfv')
+        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
+        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
+
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
+        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+
+        var firstElementInDraggedRow = $('tr[kfv=' + draggedRowKfv + ']').eq(1).first();
+
+        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
+
+        var jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "UpdateTemplateFieldSortOrder",
+            fid: draggedRowKfv,
+            newso: rowNewSortOrder - 50,
+        })
+            .done(function (data) {
+                $('#butRefresh${context}').click();
+            }).fail(function (data) {
+                alert("Update failed.");
+            });
+
+
+    }
+
+    function attachOnDragListenersToGrid() {
+        $('#diaTemplateFields').on("dragstart", function (ev) {
+            drag(ev)
+        })
+
+        $('#diaTemplateFields').on("dragover", function (ev) {
+            ev.preventDefault()
+        })
+
+        $('#diaTemplateFields').on("drop", function (ev) {
+            drop(ev)
+        })
+    }
+
+}
+
+function _displayTemplateCategories(elem) {
+    let templateId = getRowKeyFieldValue(elem);
+    let templateName = getRowValueByColumnName(elem, 'Name');
+
+    gridPop({
+        context: 'TemplateCategories',
+        type: 'horizontal',
+        title: '${templateName} Categories',
+        w: 400,
+        h: 800,
+        data: {
+            Template_ID: templateId
+        },
+        afterSave: function () {
+            ReloadPage();
+        }
+    })
+}
+
+function _displayChoicesEditor(elem, event) {
+
+    let fieldId = getRowKeyFieldValue(elem);
+    let fieldName = getRowValueByColumnName(elem, 'Field');
+    closeDialogFromContext('TemplateFields');
+
+    gridPop({
+        context: 'FieldChoices',
+        type: 'horizontal',
+        title: '${fieldName} Field',
+        w: 1200,
+        h: 600,
+        data: {
+            Template_Field_ID: fieldId
+        }
+    })
+
+}
+
+function _attachOnChangeToTypeSelect() {
+    let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
+    $("#selFieldType").on('change', (event) => {
+        jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "IsAChoiceField",
+            selectedValueId: event.target.value
+        }).done(function (res) {
+            if (res.isAChoiceField === "True") {
+                let choicesLink = createTag({
+                    tagName: 'a', tagTextContent: 'Edit Choices',
+                    attributes: {
+                        'href': '#',
+                        'onclick': 'displayChoicesEditor(this, event)'
+                    },
+                });
+                $(rowChoicesElement).html(choicesLink);
+            } else {
+                $(rowChoicesElement).html('Field type does not have choices');
+            }
+        });
+    })
+}
+
 function _validateFormInputs() {
     let payload = {
         isValid: true,
         invalidFields: []
     }
-    $(`form#${context} .form-input-wrapper`).each(function (index, inputWrapper) {
+    $('form#${context} .form-input-wrapper').each(function (index, inputWrapper) {
         var $inputWrapper = $(inputWrapper);
         var fieldName = $inputWrapper.find('label').attr('for')
         if ($inputWrapper.attr('fr') === "1") {
@@ -287,7 +481,7 @@ function _inputsAreBlank(inputsArray) {
 }
 
 function _vGridGetFieldValueByFieldName(fieldName) {
-    let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
+    let fieldElement = $('td.vgLabel:contains(' + fieldName + ')')
     return fieldElement.next().children(":first")[0];
 }
 
@@ -296,7 +490,7 @@ function _getRowValueByColumnName(elem, columnName) {
 }
 
 function _getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $(`.hgHeaderRow:last th:contains('${columnName}')`).index()
+    let columnIndex = $('.hgHeaderRow:last th:contains(' + columnName + ')').index()
     return $(elem).closest('tr').children().eq(columnIndex)[0];
 }
 
@@ -328,40 +522,6 @@ function _createTag(args) {
     return tag
 }
 
-function _attachOnChangeToMultiselect() {
-
-    $('#selCategories').change(function (e) {
-        handleSelection(e)
-    })
-}
-
-function _handleSelection(e) {
-    var target = getEventTarget(e);
-    if (target.tagName.toLowerCase() === 'input') {
-        var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
-        var allCheckboxes = getAllCheckboxes()
-        var allCheckboxSelected = getAllCheckBox().checked
-
-        if (targetIsAllCheckbox) {
-            setCheckboxesState(allCheckboxes, false)
-            target.checked = true
-        }
-        if (allCheckboxSelected && !targetIsAllCheckbox) {
-            allCheckboxes.each((index, checkbox) => {
-                if (target.nextSibling.data.trim() != checkbox.nextSibling.data.trim())
-                    checkbox.checked = false
-            })
-            target.checked = true
-        }
-    }
-}
-
-function _setCheckboxesState(checkboxes, state) {
-    checkboxes.each((index, checkbox) => {
-        checkbox.checked = state;
-    })
-}
-
 function _isAllCheckboxesChecked() {
     var allAreChecked = true
     getAllCheckboxes().each((index, checkbox) => {
@@ -372,28 +532,10 @@ function _isAllCheckboxesChecked() {
     return allAreChecked
 }
 
-function _getAllCheckboxes() {
-    return $($("#selCategories")[0]).find('input')
-}
-
-function _getAllCheckBox() {
-    return getAllCheckboxes()[0]
-}
-
-function _getEventTarget(e) {
-    e = e || window.event;
-    return e.target || e.srcElement;
-}
-
-function _getEventType(e) {
-    e = e || window.event;
-    return e.type || e.type;
-}
-
 function _createTemplate() {
 
     gridPop({
-        context: `SelectCategory`,
+        context: 'SelectCategory',
         type: 'vertical',
         title: 'New Template - Please select a Category',
         w: 400,
@@ -403,7 +545,7 @@ function _createTemplate() {
             let categoryId = selectTag.value;
             closeDialogFromContext('NewTemplate');
             gridPop({
-                context: `NewTemplate`,
+                context: 'NewTemplate',
                 type: 'vertical',
                 title: 'Enter Template information',
                 w: 400,
@@ -415,145 +557,3 @@ function _createTemplate() {
         }
     })
 }
-
-function templateFields(elem) {
-
-    let context = 'TemplateFields'
-    let templateId = $(elem).closest('tr').attr('kfv');
-    let templateName = $(elem).closest('tr').find('td:first').text();
-
-    gridPop({
-        context: context,
-        type: 'horizontal',
-        title: `${templateName}`,
-        w: RelativePixels('w', .9),
-        h: RelativePixels('h', .75),
-        data: {
-            Template_ID: templateId
-        },
-        afterLoad: function (elem) {
-            attachOnDragListenersToGrid()
-        },
-        buttons: {
-            'Close': {
-                text: 'Close',
-                priority: 'primary',
-                style: 'background: #428BCA; color: #fff;',
-                click: function () {
-                    // save scroll position
-                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
-                    // apply filters
-                    gridApplyFilters();
-                }
-            }
-        }
-    });
-
-    function drag(ev) {
-        var rowKfv = $(ev.target).closest('tr').attr('kfv')
-        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
-        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
-        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
-
-    }
-
-    function drop(ev) {
-        ev.preventDefault();
-        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
-        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
-
-        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
-
-        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
-
-        var jqxhr = $.getJSON("Process_Request.aspx", {
-            action: "UpdateTemplateFieldSortOrder",
-            fid: draggedRowKfv,
-            newso: rowNewSortOrder - 50,
-        })
-            .done(function (data) {
-                $(`#butRefresh${context}`).click();
-            }).fail(function (data) {
-                alert("Update failed.");
-            });
-
-
-    }
-
-    function attachOnDragListenersToGrid() {
-        $('#diaTemplateFields').on("dragstart", function (ev) {
-            drag(ev)
-        })
-
-        $('#diaTemplateFields').on("dragover", function (ev) {
-            ev.preventDefault()
-        })
-
-        $('#diaTemplateFields').on("drop", function (ev) {
-            drop(ev)
-        })
-    }
-
-}
-
-function _displayTemplateCategories(elem) {
-    let templateId = getRowKeyFieldValue(elem);
-    let templateName = getRowValueByColumnName(elem, 'Name');
-
-    gridPop({
-        context: `TemplateCategories`,
-        type: 'horizontal',
-        title: `${templateName} Categories`,
-        w: 400,
-        h: 800,
-        data: {
-            Template_ID: templateId
-        },
-        afterSave: function () {
-            ReloadPage();
-        }
-    })
-}
-
-function _displayChoicesEditor(elem, event) {
-
-    let fieldId = getRowKeyFieldValue(elem);
-    let fieldName = getRowValueByColumnName(elem, 'Field');
-    closeDialogFromContext('TemplateFields');
-
-    gridPop({
-        context: 'FieldChoices',
-        type: 'horizontal',
-        title: `${fieldName} Field`,
-        w: 1200,
-        h: 600,
-        data: {
-            Template_Field_ID: fieldId
-        }
-    })
-
-}
-
-function _attachOnChangeToTypeSelect() {
-    let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
-    $("#selFieldType").on('change', (event) => {
-        jqxhr = $.getJSON("Process_Request.aspx", {
-            action: "IsAChoiceField",
-            selectedValueId: event.target.value
-        }).done(function (res) {
-            if (res.isAChoiceField === "True") {
-                let choicesLink = createTag({
-                    tagName: 'a', tagTextContent: 'Edit Choices',
-                    attributes: {
-                        'href': '#',
-                        'onclick': 'displayChoicesEditor(this, event)'
-                    },
-                });
-                $(rowChoicesElement).html(choicesLink);
-            } else {
-                $(rowChoicesElement).html('Field type does not have choices');
-            }
-        });
-    })
-}
-*/

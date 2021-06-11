@@ -251,7 +251,7 @@ $(document).ready(function () {
 
     // hg vertical scroll top
     var st = GetCookie('hgScrollTop');
-    if (st != null && st != 'undefined') {
+    if (st != null && st != 'undefined' && st != 0) {
         document.getElementById("divBody").scrollTop = st;
         SetCookie('hgScrollTop', 0, -1);
 
