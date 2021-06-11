@@ -82,7 +82,7 @@ function templateFields(elem) {
         data: {
             Template_ID: templateId
         },
-        afterLoad: function (elem) {
+        afterLoad: function () {
             attachOnDragListenersToGrid()
         },
         buttons: {
@@ -113,7 +113,7 @@ function templateFields(elem) {
         var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
         var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
 
-        var firstElementInDraggedRow = $('tr[kfv=' + draggedRowKfv + ']').eq(1).first();
+        var firstElementInDraggedRow = $('tr[kfv=\'' + draggedRowKfv + '\']').eq(1).first();
 
         //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
 
@@ -123,7 +123,7 @@ function templateFields(elem) {
             newso: rowNewSortOrder - 50,
         })
             .done(function (data) {
-                $('#butRefresh${context}').click();
+                $('#butRefresh' + context).click();
             }).fail(function (data) {
                 alert("Update failed.");
             });
@@ -289,6 +289,19 @@ function getEventType(e) {
     return e.type || e.type;
 }
 
+function getRowValueByColumnName(elem, columnName) {
+    return getRowElementByColumnName(elem, columnName).innerText;
+}
+
+function getRowElementByColumnName(elem, columnName) {
+    let columnIndex = $('.hgHeaderRow:last th:contains(' + columnName + ')').index()
+    return $(elem).closest('tr').children().eq(columnIndex)[0];
+}
+
+function getRowKeyFieldValue(elem) {
+    return $(elem).closest('tr').attr('kfv')
+}
+
 function _templateFields(elem) {
 
     let context = 'TemplateFields'
@@ -345,12 +358,10 @@ function _templateFields(elem) {
             newso: rowNewSortOrder - 50,
         })
             .done(function (data) {
-                $('#butRefresh${context}').click();
+                $('#butRefresh' + context).click();
             }).fail(function (data) {
                 alert("Update failed.");
             });
-
-
     }
 
     function attachOnDragListenersToGrid() {
@@ -485,18 +496,7 @@ function _vGridGetFieldValueByFieldName(fieldName) {
     return fieldElement.next().children(":first")[0];
 }
 
-function _getRowValueByColumnName(elem, columnName) {
-    return getRowElementByColumnName(elem, columnName).innerText;
-}
 
-function _getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $('.hgHeaderRow:last th:contains(' + columnName + ')').index()
-    return $(elem).closest('tr').children().eq(columnIndex)[0];
-}
-
-function _getRowKeyFieldValue(elem) {
-    return $(elem).closest('tr').attr('kfv')
-}
 
 function _grabDialogByContext(context) {
     return $('#dia' + context);

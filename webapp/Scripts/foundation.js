@@ -833,6 +833,7 @@ function gridPop(o) {
         buttonsInTitle: , // true/false, default false
         saveFunction: ,// default function save grid, update interface, remove dialog
         afterSave: // function
+        afterLoad: // function
     });
     */
 
@@ -988,6 +989,10 @@ function gridPop(o) {
     dialogP.load(o.load.replace(/.aspx/, ''), o.data);
 
     dialogP.dialog("open");
+
+    if (o.afterLoad) {
+        o.afterLoad();
+    };
 
     if (o.buttonsInTitle) {
         CloneButtonsInTitle('dia' + o.context);
