@@ -17,9 +17,9 @@ public partial class BI : System.Web.UI.Page
 
         dtc = gc.GetTables("exec dcr_sp_reports " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
 
-        hgBI.Height = AvailableClientHeight;
-        hgBI.GridTable = dtc[0];
-        hgBI.Templates = "Category_IDs|" + gc.MultipleSelectFilter("selCategories", "123", false, dtc[1], 7, Filters) + "|Subject_IDs|" + gc.GetMultipleSelect("selSubjects", dtc[2], 1, 150) + "|Form_Template_IDs|" + gc.GetMultipleSelect("selTemplates", dtc[3], 1, 150) + "|Template_Field_IDs|" + gc.GetMultipleSelect("selFields", dtc[4], 1, 150);
+        hgReports.Height = AvailableClientHeight;
+        hgReports.GridTable = dtc[0];
+        hgReports.Templates = "Category_IDs|" + gc.GetMultipleSelect("selCategories", dtc[1], 1, 150) + "|Subject_IDs|" + gc.GetMultipleSelect("selSubjects", dtc[2], 1, 150) + "|Form_Template_IDs|" + gc.GetMultipleSelect("selTemplates", dtc[3], 1, 150) + "|Template_Field_IDs|" + gc.GetMultipleSelect("selFields", dtc[4], 1, 150);
 
         //hgTest.Filters = "Integer|Integer Filter|" + gc.GetSelect("selFilterInteger", false, dtc[2], 3, "123");
         litLeftMenu.Text = "";

@@ -18,7 +18,7 @@
             </td>
             <td class="RightTD">
                     <hg:HGrid
-                        ID="hgBI"
+                        ID="hgReports"
                         Table ="dcr_Reports"
                         KeyField ="Report_ID"
                         runat="server"

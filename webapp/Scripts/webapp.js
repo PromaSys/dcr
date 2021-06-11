@@ -235,8 +235,21 @@ function reportNew(elem) {
     gridEditorFormNew({ element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800) });
 }
 
-/*
-function _validateFormInputs() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function validateFormInputs() {
     let payload = {
         isValid: true,
         invalidFields: []
@@ -257,20 +270,20 @@ function _validateFormInputs() {
     })
     return payload
 }
-function _highglightRed(inputsArray) {
+function highglightRed(inputsArray) {
     inputsArray.each(function (index, input) {
         var $input = $(input)
         $input.addClass('is-invalid')
     });
 }
 
-function _removeRedHighligh(inputsArray) {
+function removeRedHighligh(inputsArray) {
     inputsArray.each(function (index, input) {
         var $input = $(input)
         $input.removeClass('is-invalid')
     });
 }
-function _inputsAreBlank(inputsArray) {
+function inputsAreBlank(inputsArray) {
     var blank = true
     inputsArray.each(function (index, input) {
         var $input = $(input)
@@ -286,37 +299,37 @@ function _inputsAreBlank(inputsArray) {
     return blank
 }
 
-function _vGridGetFieldValueByFieldName(fieldName) {
+function vGridGetFieldValueByFieldName(fieldName) {
     let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
     return fieldElement.next().children(":first")[0];
 }
 
-function _getRowValueByColumnName(elem, columnName) {
+function getRowValueByColumnName(elem, columnName) {
     return getRowElementByColumnName(elem, columnName).innerText;
 }
 
-function _getRowElementByColumnName(elem, columnName) {
+function getRowElementByColumnName(elem, columnName) {
     let columnIndex = $(`.hgHeaderRow:last th:contains('${columnName}')`).index()
     return $(elem).closest('tr').children().eq(columnIndex)[0];
 }
 
-function _getRowKeyFieldValue(elem) {
+function getRowKeyFieldValue(elem) {
     return $(elem).closest('tr').attr('kfv')
 }
 
-function _grabDialogByContext(context) {
+function grabDialogByContext(context) {
     return $('#dia' + context);
 }
 
-function _reloadDialog(dialog, endpoint, data) {
+function reloadDialog(dialog, endpoint, data) {
     dialog.load(endpoint, data);
 }
 
-function _closeDialogFromContext(context) {
+function closeDialogFromContext(context) {
     $('#dia' + context).dialog('destroy').remove()
 }
 
-function _createTag(args) {
+function createTag(args) {
     let tag = document.createElement(args.tagName);
     let tagText = document.createTextNode(args.tagTextContent);
 
@@ -328,14 +341,14 @@ function _createTag(args) {
     return tag
 }
 
-function _attachOnChangeToMultiselect() {
+function attachOnChangeToMultiselect() {
 
     $('#selCategories').change(function (e) {
         handleSelection(e)
     })
 }
 
-function _handleSelection(e) {
+function handleSelection(e) {
     var target = getEventTarget(e);
     if (target.tagName.toLowerCase() === 'input') {
         var targetIsAllCheckbox = target.nextSibling.data.trim() == 'All'
@@ -356,13 +369,13 @@ function _handleSelection(e) {
     }
 }
 
-function _setCheckboxesState(checkboxes, state) {
+function setCheckboxesState(checkboxes, state) {
     checkboxes.each((index, checkbox) => {
         checkbox.checked = state;
     })
 }
 
-function _isAllCheckboxesChecked() {
+function isAllCheckboxesChecked() {
     var allAreChecked = true
     getAllCheckboxes().each((index, checkbox) => {
         if (checkbox.checked == false) {
@@ -372,20 +385,20 @@ function _isAllCheckboxesChecked() {
     return allAreChecked
 }
 
-function _getAllCheckboxes() {
+function getAllCheckboxes() {
     return $($("#selCategories")[0]).find('input')
 }
 
-function _getAllCheckBox() {
+function getAllCheckBox() {
     return getAllCheckboxes()[0]
 }
 
-function _getEventTarget(e) {
+function getEventTarget(e) {
     e = e || window.event;
     return e.target || e.srcElement;
 }
 
-function _getEventType(e) {
+function getEventType(e) {
     e = e || window.event;
     return e.type || e.type;
 }
@@ -496,7 +509,7 @@ function templateFields(elem) {
 
 }
 
-function _displayTemplateCategories(elem) {
+function displayTemplateCategories(elem) {
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
 
@@ -515,7 +528,7 @@ function _displayTemplateCategories(elem) {
     })
 }
 
-function _displayChoicesEditor(elem, event) {
+function displayChoicesEditor(elem, event) {
 
     let fieldId = getRowKeyFieldValue(elem);
     let fieldName = getRowValueByColumnName(elem, 'Field');
@@ -534,7 +547,7 @@ function _displayChoicesEditor(elem, event) {
 
 }
 
-function _attachOnChangeToTypeSelect() {
+function attachOnChangeToTypeSelect() {
     let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
     $("#selFieldType").on('change', (event) => {
         jqxhr = $.getJSON("Process_Request.aspx", {
@@ -556,4 +569,3 @@ function _attachOnChangeToTypeSelect() {
         });
     })
 }
-*/
