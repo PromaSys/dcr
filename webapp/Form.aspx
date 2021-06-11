@@ -18,5 +18,19 @@
         Stacked="true"
         />
     </form>
+
+    <script type="text/javascript">
+
+        var title = '<%=Session["FormTitle"].ToString() %>';
+        $('.ui-dialog-title').html(title);
+
+        // initialize datepicker
+        $('.datepicker').datepicker({
+            dateFormat: 'm/d/yy',
+            autoclose: true,
+            width: 300
+        });
+    </script>
+
 </body>
 </html>

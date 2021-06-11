@@ -20,9 +20,10 @@ public partial class Form : System.Web.UI.Page
         string Context = gc.Req("c");
         string FormTemplateID = gc.Req("ftid");
         string FormID = gc.Req("fid");
+        string SubjectID = gc.Req("sid");
 
 
-        dtc = gc.GetTables($"exec dcr_sp_form {Session["UserID"].ToString()},{Session["UserGroupID"].ToString()},{FormID},{FormTemplateID}");
+        dtc = gc.GetTables("exec dcr_sp_form " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + "," + FormID + "," + FormTemplateID + "," + SubjectID);
         dt = dtc[0];
 
         string FormSQL = dt.Rows[0]["Form_SQL"].ToString();
@@ -35,6 +36,7 @@ public partial class Form : System.Web.UI.Page
         string FormDocs = dt.Rows[0]["Form_Docs"].ToString();
         string FormDoNotEdit = dt.Rows[0]["Form_DoNotEdit"].ToString();
         string FormLinks = dt.Rows[0]["Form_Links"].ToString();
+        string FormFormats = dt.Rows[0]["Form_Formats"].ToString();
 
         vgForm.Hide = "Template_Form_ID|Form_ID";
         vgForm.ID = Context;
@@ -44,11 +46,14 @@ public partial class Form : System.Web.UI.Page
         vgForm.Required = FormRequired;
         vgForm.Templates = FormTemplates;
 
+        vgForm.Formats = FormFormats;
         vgForm.NumberFormat = FormNumberFormat;
         vgForm.TextAreas = FormTextAreas;
         vgForm.Calendars = FormCalendars;
         //vgForm.Docs = FormDocs;
         vgForm.DoNotEdit = FormDoNotEdit;
         vgForm.Links = FormLinks;
+
+        Session["FormTitle"] = dtc[1].Rows[0]["Title"].ToString();
     }
 }

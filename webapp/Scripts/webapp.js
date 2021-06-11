@@ -10,12 +10,13 @@ function temlateFormPreview(elem) {
     gridPop({
         context: context,
         load: 'Form.aspx',
-        title: `${templateName} - Preview`,
+        title: templateName + ' - Preview',
         w: RelativePixels('w', 1.0, 550),
         h: RelativePixels('h', 0.85),
         data: {
             ftid: templateId,
-            fid: formId
+            fid: formId,
+            sid: 0
         },
         afterLoad: function (elem) {
         },
@@ -44,18 +45,121 @@ function temlateFormPreview(elem) {
 
 }
 
+function editTemplateField(elem) {
+    gridEditorForm({
+        element: elem,
+        w: RelativePixels('w', 1, 800),
+        h: RelativePixels('h', .7),
+        afterSave: function () {
+            // close form
+            $('#diaetabGridTemplateFields').dialog('destroy').remove();
+
+            gridReloadDialog('TemplateFields', true);
+        },
+        afterLoad: function () {
+
+            // enable/disable form controls based on existing loaded data
+
+
+            // add an onchange to field type select to alter form controls
+
+        }
+    });
+}
+
+function templateFields(elem) {
+
+    let context = 'TemplateFields'
+    let templateId = $(elem).closest('tr').attr('kfv');
+    let templateName = $(elem).closest('tr').find('td:first').text();
+
+    gridPop({
+        context: context,
+        type: 'horizontal',
+        title: `${templateName}`,
+        w: RelativePixels('w', .9),
+        h: RelativePixels('h', .75),
+        data: {
+            Template_ID: templateId
+        },
+        afterLoad: function (elem) {
+            attachOnDragListenersToGrid()
+        },
+        buttons: {
+            'Close': {
+                text: 'Close',
+                priority: 'primary',
+                style: 'background: #428BCA; color: #fff;',
+                click: function () {
+                    // save scroll position
+                    SetCookie('hgScrollTop', $('.tablediv:first').scrollTop(), 1);
+                    // apply filters
+                    gridApplyFilters();
+                }
+            }
+        }
+    });
+
+    function drag(ev) {
+        var rowKfv = $(ev.target).closest('tr').attr('kfv')
+        var rowOriginalSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+        ev.originalEvent.dataTransfer.setData("fieldKfv", rowKfv);
+        ev.originalEvent.dataTransfer.setData("rowOriginalSortOrder", rowOriginalSortOrder);
+
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
+        var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
+
+        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+
+        //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
+
+        var jqxhr = $.getJSON("Process_Request.aspx", {
+            action: "UpdateTemplateFieldSortOrder",
+            fid: draggedRowKfv,
+            newso: rowNewSortOrder - 50,
+        })
+            .done(function (data) {
+                $(`#butRefresh${context}`).click();
+            }).fail(function (data) {
+                alert("Update failed.");
+            });
+
+
+    }
+
+    function attachOnDragListenersToGrid() {
+        $('#diaTemplateFields').on("dragstart", function (ev) {
+            drag(ev)
+        })
+
+        $('#diaTemplateFields').on("dragover", function (ev) {
+            ev.preventDefault()
+        })
+
+        $('#diaTemplateFields').on("drop", function (ev) {
+            drop(ev)
+        })
+    }
+
+}
 
 // form related functions
-function form(elem) {
+function form(formID, formTemplateID, subjectID) {
+
     gridPop({
         context: 'form',
         load: 'Form.aspx',
-        title: 'Form -' + $(elem).text(),
+        title: 'Form - Subject',
         w: RelativePixels('w', 1.0, 550),
         h: RelativePixels('h', 0.85),
         data: {
-            ftid: 0,
-            fid: $(elem).closest('tr').attr('kfv')
+            fid: formID,
+            ftid: formTemplateID,
+            sid: subjectID
         },
         saveFunction: function () {
             gridValidate({
@@ -66,7 +170,7 @@ function form(elem) {
                         // determine what changed
                         var $resulte = $(this);
                         if (($resulte.attr('oresultkey') != $resulte.attr('resultkey') || $resulte.attr('oresult') != $resulte.attr('result'))) {
-                            // create json
+                            // create xml
                             changes += '<fv f="' + $resulte.attr('fn') + '" v="' + $resulte.attr('result') + '"/>,';
                         }
                     });
@@ -88,6 +192,7 @@ function form(elem) {
                             success: function (response) {
                                 //o.success(response);
                                 $('#diaform').dialog('destroy').remove();
+                                ReloadPage();
                             },
                             error: function (response) {
                                 //o.error(response);
@@ -105,6 +210,32 @@ function form(elem) {
     });
 }
 
+function formNew(elem) {
+
+    formID = 0;
+    formTemplateID = $(elem).val();
+    subjectID = $('.filter#Subject_ID').val();
+
+    $(elem).prop("selectedIndex", 0).val();
+
+    form(formID, formTemplateID, subjectID);
+}
+
+function formExisting(elem) {
+
+    formID = $(elem).closest('tr').attr('kfv');
+    formTemplateID = 0;
+    subjectID = 0;
+
+    form(formID, formTemplateID, subjectID);
+}
+
+// BI
+function reportNew(elem) {
+    gridEditorFormNew({ element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800) });
+}
+
+/*
 function _validateFormInputs() {
     let payload = {
         isValid: true,
@@ -132,6 +263,7 @@ function _highglightRed(inputsArray) {
         $input.addClass('is-invalid')
     });
 }
+
 function _removeRedHighligh(inputsArray) {
     inputsArray.each(function (index, input) {
         var $input = $(input)
@@ -153,7 +285,6 @@ function _inputsAreBlank(inputsArray) {
     });
     return blank
 }
-
 
 function _vGridGetFieldValueByFieldName(fieldName) {
     let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
@@ -195,28 +326,6 @@ function _createTag(args) {
 
     tag.appendChild(tagText);
     return tag
-}
-
-function editTemplateField(elem) {
-    gridEditorForm({
-        element: elem,
-        w: RelativePixels('w', 1, 800),
-        h: RelativePixels('h', .7),
-        afterSave: function () {
-            // close form
-            $('#diaetabGridTemplateFields').dialog('destroy').remove();
-
-            gridReloadDialog('TemplateFields', true);
-        },
-        afterLoad: function () {
-
-            // enable/disable form controls based on existing loaded data
-
-
-            // add an onchange to field type select to alter form controls
-
-        }
-    });
 }
 
 function _attachOnChangeToMultiselect() {
@@ -447,4 +556,4 @@ function _attachOnChangeToTypeSelect() {
         });
     })
 }
-
+*/
