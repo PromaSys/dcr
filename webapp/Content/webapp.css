@@ -17,3 +17,12 @@
     height: 150px;
     overflow: auto;
 }
+
+select#selNewFormTemplate {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 1px solid gray;
+    outline: 0px;
+    background-color: transparent;
+}

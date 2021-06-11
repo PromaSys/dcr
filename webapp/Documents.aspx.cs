@@ -37,6 +37,7 @@ public partial class Documents : System.Web.UI.Page
                 Session["ContextID"] = Request.QueryString["cid"].ToString();
                 Session["Context"] = Request.QueryString["c"].ToString().Replace("+", "");
                 Session["DocsReadOnly"] = Request.QueryString["ro"].ToString();
+                Session["DocsMinimal"] = Request.QueryString["m"].ToString();
 
                 if (Session["DocsReadOnly"].ToString() == "1")
                 {
@@ -66,13 +67,21 @@ public partial class Documents : System.Web.UI.Page
             Docs.Height = Convert.ToInt32(DialogHeight) - 140;
             Docs.Width = Convert.ToInt32(DialogWidth);
             Docs.EncryptionKey = Application["EncryptionKey"].ToString();
-            Docs.Hide = "Document_ID|Description";
+            Docs.Hide = "Document_ID|Description|Brief";
 
             Docs.GridTable = dt;
 
             Docs.Widths = "";
             Docs.Formats = "";
-            Docs.AddSQL = "Uploaded_By|'" + Session["UserName"].ToString() + "'"; gc = null;
+            Docs.AddSQL = "Uploaded_By|'" + Session["UserName"].ToString() + "'";
+
+            if (Session["DocsMinimal"].ToString() == "1")
+            {
+                Docs.Hide = "Document_ID|Description|FileName|Size|Uploaded_By|Insert_Date";
+                Docs.Labels = "Brief|File";
+            }
+
+            gc = null;
         }
         else
         {

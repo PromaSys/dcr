@@ -20,11 +20,17 @@ public partial class Forms : System.Web.UI.Page
         string Filters = gc.Req("filters");
         string Search = gc.Req("search");
 
-        dtc = gc.GetTables("exec dcr_sp_get_forms " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
+        dtc = gc.GetTables("exec dcr_sp_forms " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + ",'" + Filters + "','" + Search + "'");
 
-        hgTemplates.Height = AvailableClientHeight;
-        hgTemplates.GridTable = dtc[0];
-        hgTemplates.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
+        if(dtc[4].Rows.Count > 0)
+        {
+            string Subject = dtc[0].Rows[0]["Subject"].ToString();
+            hgForms.Title = "Forms| " + Subject + " - New Form &nbsp;" + gc.GetSelect("selNewFormTemplate", true, dtc[4]).Replace("id=","onchange=\"formNew(this);\" id=");
+        }
+
+        hgForms.Height = AvailableClientHeight;
+        hgForms.GridTable = dtc[0];
+        hgForms.Templates = "Category_ID|" + gc.GetSelect("selCategory", true, dtc[1]);
         //hgTemplates.AddSQL = gc.TraceSQL() + "Category_ID";
 
         //hgTest.Filters = "Integer|Integer Filter|" + gc.GetSelect("selFilterInteger", false, dtc[2], 3, "123");
