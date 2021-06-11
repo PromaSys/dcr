@@ -232,11 +232,74 @@ function formExisting(elem) {
 
 // BI
 function reportNew(elem) {
-    gridEditorFormNew({ element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800) });
+    gridEditorFormNew({
+        element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800), afterLoad: function () {
+            $('.hgResult input').click(function () { GetResultMultiSelect(this); reportCascade(this); })
+            // fix label width
+            $('.hgResult').closest('td').width($('.hgResult:first').closest('td').width());
+        },
+        afterSave: function () {
+
+            ReloadPage();
+        }
+    });
+}
+
+function reportEdit(elem) {
+    //Editor, RelativePixels('w', 1, 800), RelativePixels('h', .75, 800)
+    gridEditorForm({
+        element: elem, w: RelativePixels('w', 1, 800), h: RelativePixels('h', .75, 800), afterLoad: function () {
+            $('.hgResult input').click(function () { GetResultMultiSelect(this); reportCascade(this); })
+            // fix label width
+            $('.hgResult').closest('td').width($('.hgResult:first').closest('td').width());
+            // initialize
+            reportCascadeInitialize();
+        },
+        afterSave: function () {
+
+            ReloadPage();
+        }
+    });
+}
+
+function reportCascade(elem, uncheckHidden=true) {
+    //alert($(elem).closest('td').attr('f'));
+
+    // determine what is checked
+    var checked = $(elem).closest('.hgResult').find('input:checked');
+
+    if (checked.length == 0) {
+        $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult tr').show();
+        return;
+    }
+    else
+    {
+        // hide all below
+        $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult tr').hide();
+
+        checked.closest('td').each(function () {
+            var c = $(this).attr('c');
+            var c0 = $(this).attr('c').substr(0,1) + '_0_';
+            $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult tr td[f*="' + c + '"]').closest('tr').show();
+            $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult tr td[f*="' + c0 + '"]').closest('tr').show();
+        });
+
+        if (uncheckHidden) {
+            // uncheck hidden
+            $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult input:hidden').prop('checked', false);
+        }
+    }
+
+}
+
+function reportCascadeInitialize() {
+    $('.hgResult input:checked').each(function () { reportCascade(this, false); });
+    // uncheck hidden
+    $(elem).closest('.hgResult').closest('tr').nextAll().find('.hgResult input:hidden').prop('checked', false);
 }
 
 
-
+// template fields drag and drop
 function attachOnChangeToMultiselect() {
 
     $('#selCategories').change(function (e) {

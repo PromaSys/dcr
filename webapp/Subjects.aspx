@@ -34,8 +34,8 @@
                         TextAreas = ""
                         NumberFormat = ""
                         DeleteColumn="true"
-                        Chat ="Chat|Subjects|Subject_ID|RelativePixels('w', 1, 500), RelativePixels('h', .75, 600)"
-                        Docs="Docs|Subjects|Subject_ID|RelativePixels('w', 1, 1000), RelativePixels('h', .75, 600)" 
+                        Chat ="Chat|Subject|Subject_ID|RelativePixels('w', 1, 500), RelativePixels('h', .75, 600)"
+                        Docs="Docs|Subject|Subject_ID|RelativePixels('w', 1, 1000), RelativePixels('h', .75, 600)|Images|Subject Image|Subject_ID|RelativePixels('w', 1, 1000), RelativePixels('h', .75, 600)" 
                         Search ="menu"
                         CssClass ="table table-hover scrollable fixedheader js-dynamitable hg"
 

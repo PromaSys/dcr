@@ -630,6 +630,10 @@ namespace WebApp.App_Code
                             {
                                 sb.Append("<td " + dsTable.Columns[2].ColumnName + "=\"" + dsTable.Rows[dsRow][2].ToString() + "\" ><input id=\"" + id + "r" + r.ToString() + "c" + i.ToString() + "\" type=\"checkbox\" value=\"" + Encrypt(dsTable.Rows[dsRow]["value"].ToString()) + "\" " + Checked + " />" + dsTable.Rows[dsRow]["label"].ToString() + "</td >");
                             }
+                            else if (dsColumns == 4)
+                            {
+                                sb.Append("<td " + dsTable.Columns[2].ColumnName + "=\"" + dsTable.Rows[dsRow][2].ToString() + "\" " + dsTable.Columns[3].ColumnName + "=\"" + dsTable.Rows[dsRow][3].ToString() + "\" ><input id=\"" + id + "r" + r.ToString() + "c" + i.ToString() + "\" type=\"checkbox\" value=\"" + Encrypt(dsTable.Rows[dsRow]["value"].ToString()) + "\" " + Checked + " />" + dsTable.Rows[dsRow]["label"].ToString() + "</td >");
+                            }
                         }
                     }
                     sb.Append("</tr >");

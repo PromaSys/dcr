@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="BI.aspx.cs" Inherits="BI" %>
+﻿<%@ Page Title="BI" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="BI.aspx.cs" Inherits="BI" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
 
@@ -24,7 +24,7 @@
                         runat="server"
                         Title ="Reports|<a href='#' onclick='reportNew(this);' class='btn btn-primary'>New Report</a>"
                         Edit = "false"
-                        Links = "Report|Editor, RelativePixels('w', 1, 800), RelativePixels('h', .75, 800)"
+                        Links = "Report|reportEdit(this);"
                         Required ="Report|Template_Field_IDs"
                         Hide="Report_ID"
                         Labels ="Category_IDs|Categories|Subject_IDs|Subjects|Form_Template_IDs|Templates|Template_Field_IDs|Fields"
@@ -42,5 +42,7 @@
             </td>
         </tr>
     </table>
+
+    
 </asp:Content>
 
