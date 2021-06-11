@@ -76,13 +76,13 @@ function templateFields(elem) {
     gridPop({
         context: context,
         type: 'horizontal',
-        title: `${templateName}`,
+        title: templateName,
         w: RelativePixels('w', .9),
         h: RelativePixels('h', .75),
         data: {
             Template_ID: templateId
         },
-        afterLoad: function (elem) {
+        afterLoad: function () {
             attachOnDragListenersToGrid()
         },
         buttons: {
@@ -113,7 +113,7 @@ function templateFields(elem) {
         var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
         var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
 
-        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+        var firstElementInDraggedRow = $('tr[kfv=\'' + draggedRowKfv + '\']').eq(1).first();
 
         //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
 
@@ -123,7 +123,7 @@ function templateFields(elem) {
             newso: rowNewSortOrder - 50,
         })
             .done(function (data) {
-                $(`#butRefresh${context}`).click();
+                $('#butRefresh' + context).click();
             }).fail(function (data) {
                 alert("Update failed.");
             });
@@ -237,110 +237,6 @@ function reportNew(elem) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-function validateFormInputs() {
-    let payload = {
-        isValid: true,
-        invalidFields: []
-    }
-    $(`form#${context} .form-input-wrapper`).each(function (index, inputWrapper) {
-        var $inputWrapper = $(inputWrapper);
-        var fieldName = $inputWrapper.find('label').attr('for')
-        if ($inputWrapper.attr('fr') === "1") {
-            let inputs = $inputWrapper.find('.form-input');
-            if (inputsAreBlank(inputs) === true) {
-                highglightRed(inputs);
-                payload.isValid = false
-                payload.invalidFields.push(fieldName)
-            } else {
-                removeRedHighligh(inputs);
-            }
-        }
-    })
-    return payload
-}
-function highglightRed(inputsArray) {
-    inputsArray.each(function (index, input) {
-        var $input = $(input)
-        $input.addClass('is-invalid')
-    });
-}
-
-function removeRedHighligh(inputsArray) {
-    inputsArray.each(function (index, input) {
-        var $input = $(input)
-        $input.removeClass('is-invalid')
-    });
-}
-function inputsAreBlank(inputsArray) {
-    var blank = true
-    inputsArray.each(function (index, input) {
-        var $input = $(input)
-        if ($input.attr('type') === "checkbox") {
-            if ($input.is(":checked")) {
-                blank = false;
-            }
-        }
-        else if ($input.val() !== "") {
-            blank = false;
-        }
-    });
-    return blank
-}
-
-function vGridGetFieldValueByFieldName(fieldName) {
-    let fieldElement = $(`td.vgLabel:contains('${fieldName}')`)
-    return fieldElement.next().children(":first")[0];
-}
-
-function getRowValueByColumnName(elem, columnName) {
-    return getRowElementByColumnName(elem, columnName).innerText;
-}
-
-function getRowElementByColumnName(elem, columnName) {
-    let columnIndex = $(`.hgHeaderRow:last th:contains('${columnName}')`).index()
-    return $(elem).closest('tr').children().eq(columnIndex)[0];
-}
-
-function getRowKeyFieldValue(elem) {
-    return $(elem).closest('tr').attr('kfv')
-}
-
-function grabDialogByContext(context) {
-    return $('#dia' + context);
-}
-
-function reloadDialog(dialog, endpoint, data) {
-    dialog.load(endpoint, data);
-}
-
-function closeDialogFromContext(context) {
-    $('#dia' + context).dialog('destroy').remove()
-}
-
-function createTag(args) {
-    let tag = document.createElement(args.tagName);
-    let tagText = document.createTextNode(args.tagTextContent);
-
-    args.attributes && Object.keys(args.attributes).forEach((attrKey) => {
-        tag.setAttribute(attrKey, args.attributes[attrKey])
-    })
-
-    tag.appendChild(tagText);
-    return tag
-}
-
 function attachOnChangeToMultiselect() {
 
     $('#selCategories').change(function (e) {
@@ -375,16 +271,6 @@ function setCheckboxesState(checkboxes, state) {
     })
 }
 
-function isAllCheckboxesChecked() {
-    var allAreChecked = true
-    getAllCheckboxes().each((index, checkbox) => {
-        if (checkbox.checked == false) {
-            allAreChecked = false
-        }
-    })
-    return allAreChecked
-}
-
 function getAllCheckboxes() {
     return $($("#selCategories")[0]).find('input')
 }
@@ -403,33 +289,20 @@ function getEventType(e) {
     return e.type || e.type;
 }
 
-function _createTemplate() {
-
-    gridPop({
-        context: `SelectCategory`,
-        type: 'vertical',
-        title: 'New Template - Please select a Category',
-        w: 400,
-        h: 240,
-        saveFunction: function () {
-            let selectTag = vGridGetFieldValueByFieldName('Category')
-            let categoryId = selectTag.value;
-            closeDialogFromContext('NewTemplate');
-            gridPop({
-                context: `NewTemplate`,
-                type: 'vertical',
-                title: 'Enter Template information',
-                w: 400,
-                h: 500,
-                data: {
-                    categoryId: categoryId
-                }
-            })
-        }
-    })
+function getRowValueByColumnName(elem, columnName) {
+    return getRowElementByColumnName(elem, columnName).innerText;
 }
 
-function templateFields(elem) {
+function getRowElementByColumnName(elem, columnName) {
+    let columnIndex = $('.hgHeaderRow:last th:contains(' + columnName + ')').index()
+    return $(elem).closest('tr').children().eq(columnIndex)[0];
+}
+
+function getRowKeyFieldValue(elem) {
+    return $(elem).closest('tr').attr('kfv')
+}
+
+function _templateFields(elem) {
 
     let context = 'TemplateFields'
     let templateId = $(elem).closest('tr').attr('kfv');
@@ -438,7 +311,7 @@ function templateFields(elem) {
     gridPop({
         context: context,
         type: 'horizontal',
-        title: `${templateName}`,
+        title: '${templateName}',
         w: RelativePixels('w', .9),
         h: RelativePixels('h', .75),
         data: {
@@ -475,7 +348,7 @@ function templateFields(elem) {
         var draggedRowKfv = ev.originalEvent.dataTransfer.getData("fieldKfv");
         var rowNewSortOrder = getRowValueByColumnName(ev.target, 'Sort Order');
 
-        var firstElementInDraggedRow = $(`tr[kfv='${draggedRowKfv}']`).eq(1).first();
+        var firstElementInDraggedRow = $('tr[kfv=' + draggedRowKfv + ']').eq(1).first();
 
         //var newSortOrder = $(getRowElementByColumnName(firstElementInDraggedRow, 'Sort Order')).text(parseInt(rowNewSortOrder) - 50);
 
@@ -485,12 +358,10 @@ function templateFields(elem) {
             newso: rowNewSortOrder - 50,
         })
             .done(function (data) {
-                $(`#butRefresh${context}`).click();
+                $('#butRefresh' + context).click();
             }).fail(function (data) {
                 alert("Update failed.");
             });
-
-
     }
 
     function attachOnDragListenersToGrid() {
@@ -509,14 +380,14 @@ function templateFields(elem) {
 
 }
 
-function displayTemplateCategories(elem) {
+function _displayTemplateCategories(elem) {
     let templateId = getRowKeyFieldValue(elem);
     let templateName = getRowValueByColumnName(elem, 'Name');
 
     gridPop({
-        context: `TemplateCategories`,
+        context: 'TemplateCategories',
         type: 'horizontal',
-        title: `${templateName} Categories`,
+        title: '${templateName} Categories',
         w: 400,
         h: 800,
         data: {
@@ -528,7 +399,7 @@ function displayTemplateCategories(elem) {
     })
 }
 
-function displayChoicesEditor(elem, event) {
+function _displayChoicesEditor(elem, event) {
 
     let fieldId = getRowKeyFieldValue(elem);
     let fieldName = getRowValueByColumnName(elem, 'Field');
@@ -537,7 +408,7 @@ function displayChoicesEditor(elem, event) {
     gridPop({
         context: 'FieldChoices',
         type: 'horizontal',
-        title: `${fieldName} Field`,
+        title: '${fieldName} Field',
         w: 1200,
         h: 600,
         data: {
@@ -547,7 +418,7 @@ function displayChoicesEditor(elem, event) {
 
 }
 
-function attachOnChangeToTypeSelect() {
+function _attachOnChangeToTypeSelect() {
     let rowChoicesElement = getRowElementByColumnName(event.target, 'Choices')
     $("#selFieldType").on('change', (event) => {
         jqxhr = $.getJSON("Process_Request.aspx", {
@@ -567,5 +438,122 @@ function attachOnChangeToTypeSelect() {
                 $(rowChoicesElement).html('Field type does not have choices');
             }
         });
+    })
+}
+
+function _validateFormInputs() {
+    let payload = {
+        isValid: true,
+        invalidFields: []
+    }
+    $('form#${context} .form-input-wrapper').each(function (index, inputWrapper) {
+        var $inputWrapper = $(inputWrapper);
+        var fieldName = $inputWrapper.find('label').attr('for')
+        if ($inputWrapper.attr('fr') === "1") {
+            let inputs = $inputWrapper.find('.form-input');
+            if (inputsAreBlank(inputs) === true) {
+                highglightRed(inputs);
+                payload.isValid = false
+                payload.invalidFields.push(fieldName)
+            } else {
+                removeRedHighligh(inputs);
+            }
+        }
+    })
+    return payload
+}
+function _highglightRed(inputsArray) {
+    inputsArray.each(function (index, input) {
+        var $input = $(input)
+        $input.addClass('is-invalid')
+    });
+}
+
+function _removeRedHighligh(inputsArray) {
+    inputsArray.each(function (index, input) {
+        var $input = $(input)
+        $input.removeClass('is-invalid')
+    });
+}
+function _inputsAreBlank(inputsArray) {
+    var blank = true
+    inputsArray.each(function (index, input) {
+        var $input = $(input)
+        if ($input.attr('type') === "checkbox") {
+            if ($input.is(":checked")) {
+                blank = false;
+            }
+        }
+        else if ($input.val() !== "") {
+            blank = false;
+        }
+    });
+    return blank
+}
+
+function _vGridGetFieldValueByFieldName(fieldName) {
+    let fieldElement = $('td.vgLabel:contains(' + fieldName + ')')
+    return fieldElement.next().children(":first")[0];
+}
+
+
+
+function _grabDialogByContext(context) {
+    return $('#dia' + context);
+}
+
+function _reloadDialog(dialog, endpoint, data) {
+    dialog.load(endpoint, data);
+}
+
+function _closeDialogFromContext(context) {
+    $('#dia' + context).dialog('destroy').remove()
+}
+
+function _createTag(args) {
+    let tag = document.createElement(args.tagName);
+    let tagText = document.createTextNode(args.tagTextContent);
+
+    args.attributes && Object.keys(args.attributes).forEach((attrKey) => {
+        tag.setAttribute(attrKey, args.attributes[attrKey])
+    })
+
+    tag.appendChild(tagText);
+    return tag
+}
+
+function _isAllCheckboxesChecked() {
+    var allAreChecked = true
+    getAllCheckboxes().each((index, checkbox) => {
+        if (checkbox.checked == false) {
+            allAreChecked = false
+        }
+    })
+    return allAreChecked
+}
+
+function _createTemplate() {
+
+    gridPop({
+        context: 'SelectCategory',
+        type: 'vertical',
+        title: 'New Template - Please select a Category',
+        w: 400,
+        h: 240,
+        saveFunction: function () {
+            let selectTag = vGridGetFieldValueByFieldName('Category')
+            let categoryId = selectTag.value;
+            closeDialogFromContext('NewTemplate');
+            gridPop({
+                context: 'NewTemplate',
+                type: 'vertical',
+                title: 'Enter Template information',
+                w: 400,
+                h: 500,
+                data: {
+                    categoryId: categoryId
+                }
+            })
+        }
     })
 }
