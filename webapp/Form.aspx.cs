@@ -21,9 +21,9 @@ public partial class Form : System.Web.UI.Page
         string FormTemplateID = gc.Req("ftid");
         string FormID = gc.Req("fid");
         string SubjectID = gc.Req("sid");
-
-
+        
         dtc = gc.GetTables("exec dcr_sp_form " + Session["UserID"].ToString() + "," + Session["UserGroupID"].ToString() + "," + FormID + "," + FormTemplateID + "," + SubjectID);
+
         dt = dtc[0];
 
         string FormSQL = dt.Rows[0]["Form_SQL"].ToString();
@@ -40,11 +40,17 @@ public partial class Form : System.Web.UI.Page
 
         vgForm.Hide = "Template_Form_ID|Form_ID";
         vgForm.ID = Context;
-
         vgForm.GridTable = gc.GetTable(FormSQL);
         vgForm.Labels = FormLabels;
+        vgForm.Hide = "Template_Form_ID";
         vgForm.Required = FormRequired;
         vgForm.Templates = FormTemplates;
+        vgForm.Calendars = FormCalendars;
+        //vgForm.TextAreas = FormTextAreas;
+        vgForm.Chat = "fld_tf_3_ff_5|Test|Test_ID|800,600";
+        vgForm.Docs = "fld_tf_3_ff_5|Test|Test_ID|1000,400";
+        //vgForm.NumberFormat = FormNumberFormat;
+        vgForm.EncryptionKey = Application["EncryptionKey"].ToString();
 
         vgForm.Formats = FormFormats;
         vgForm.NumberFormat = FormNumberFormat;
