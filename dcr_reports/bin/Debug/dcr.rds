@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="dcr">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source="p001, 4434";Initial Catalog=dcr</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>9d9806fb-3998-4cc9-8101-7bd7885e3c95</DataSourceID>
+</RptDataSource>

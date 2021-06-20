@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Compare It!\wincmp3.exe" "c:\aspx_2020_projects\foundation\webapp\Scripts\foundation.js" "c:\aspx_2021_projects\dcr\webapp\Scripts\foundation.js"

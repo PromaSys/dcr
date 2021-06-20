@@ -3,7 +3,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <table class="LeftRightTable">
         <tr>
-            <td class="LeftTD" style="width: 240px; _display: none;">
+            <td class="LeftTD" style="width: 240px; min-width: 240px;">
                 <table id="tabLeftMenu" class="LeftRightTable">
                     <tr>
                         <td class="LeftMenuTitle">Filters<a class="btn">&nbsp;</a></td>
@@ -27,7 +27,7 @@
                         Required ="Subject_ID"
                         Hide="Subject_ID"
                         Labels ="Category_ID|Category"
-                        DoNotEdit ="Chat|Docs"
+                        DoNotEdit ="Chat|Docs| |Images"
                         ColumnStyle ="Category_ID|text-align: left;|Active|text-align: center;|Del|text-align: center;"
                         Widths=""
                         Calendars=""

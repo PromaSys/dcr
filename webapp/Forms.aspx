@@ -4,7 +4,7 @@
 
         <table class="LeftRightTable">
         <tr>
-            <td class="LeftTD" style="width: 240px; _display: none;">
+            <td class="LeftTD" style="width: 240px; min-width: 240px;">
                 <table id="tabLeftMenu" class="LeftRightTable">
                     <tr>
                         <td class="LeftMenuTitle">Filters<a class="btn">&nbsp;</a></td>
@@ -29,12 +29,11 @@
                         Hide="Form_ID"
                         Labels ="Category_ID|Category"
                         _DoNotEdit ="Field_Count"
-                        _Formats ="Date|MM/dd/yyyy"
                         _ColumnStyle ="Field_Count|text-align: center;"
-                        Widths="default"
+                        Widths=""
                         _Calendars="Date"
                         _TextAreas = "Long_Text|3"
-                        _NumberFormat = "Money|$#,###.00"
+                        Formats = "Created|MMM d,yyyy|Modified|MMM d, yyyy"
                         DeleteColumn="false"
                         _Chat ="Chat|Test|Subject_ID|800,600"
                         _Docs="Docs|Test|Subject_ID|1000,400" 

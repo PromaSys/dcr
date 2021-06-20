@@ -202,19 +202,19 @@ public partial class Dialog : System.Web.UI.Page
                     HGrid.Table = "dcr_Form_Template_Fields";
                     HGrid.KeyField = "Template_Field_ID";
                     HGrid.Edit = false;
-                    HGrid.ColumnStyle = "Required|text-align: center;|Field_Type_ID|text-align: left;";
+                    HGrid.ColumnStyle = "Required|text-align: center;|Field_Type_ID|text-align: left;|Del|text-align: center;|Sort_Order|display: none;";
                     HGrid.Labels = "Field_Type_ID|Type|Choice_Count|Choices";
                     HGrid.Formats = "";
-                    HGrid.DoNotEdit = "Choice_Count";
+                    HGrid.DoNotEdit = "Del|Sort_Order|Choice_Count";
                     HGrid.Blocked = "Choices";
                     HGrid.Templates = "Field_Type_ID|" + gc.GetSelect("selFieldType", true, dtc[1]);
-                    HGrid.Title = "Fields|<a href='#' onclick='gridEditorFormNew({element: this, w: 800, h: 400});' class='btn btn-primary' style='color: white !important;' >New Field</a>";
+                    HGrid.Title = "Fields|<a href='#' onclick='gridEditorFormNew({element: this, w: 800, h: 800});' class='btn btn-primary' style='color: white !important;' >New Field</a>";
                     HGrid.Hide = "Template_Field_ID";
                     HGrid.Links = "Field|editTemplateField(this);";
                     HGrid.Calendars = "Date";
                     HGrid.TextAreas = "Choices|8";
                     HGrid.AddSQL = gc.TraceSQL() + "|Form_Template_ID|" + Template_ID;
-                    HGrid.DeleteColumn = true;
+                    //HGrid.DeleteColumn = true;
                     HGrid.Widths = "";
                     break;
 

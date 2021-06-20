@@ -439,6 +439,20 @@ public partial class Process_Request : System.Web.UI.Page
                         Response.Write("{\"message\": \"" + Ex.Message + "\", \"messagetype\": \"danger\"}");
                     }
                 }
+                else if (RequestAction == "SummarizeForm")
+                {
+                    try
+                    {
+                        var FormID = gc.TryDecrypt(req["fid"]);
+                        gc.ExecuteSQL("exec dcr_sp_form_summarize " + FormID);
+                        Response.Write("{\"message\": \"Success\", \"messagetype\": \"success\"}");
+
+                    }
+                    catch (Exception Ex)
+                    {
+                        Response.Write("{\"message\": \"" + Ex.Message + "\", \"messagetype\": \"danger\"}");
+                    }
+                }
 
             }
 

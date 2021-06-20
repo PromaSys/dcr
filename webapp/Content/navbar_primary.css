@@ -65,7 +65,7 @@
 
     .navbar .navbar-collapse,
     .navbar .navbar-form {
-        border-color: #FFFFFF;
+        border-color: red;
     }
 
     .navbar .navbar-link {

@@ -4,7 +4,7 @@
 
         <table class="LeftRightTable">
         <tr>
-            <td class="LeftTD" style="width: 240px; _display: none;">
+            <td class="LeftTD" style="width: 240px; min-width: 240px;">
                 <table id="tabLeftMenu" class="LeftRightTable">
                     <tr>
                         <td class="LeftMenuTitle">Filters<a class="btn">&nbsp;</a></td>
@@ -22,9 +22,9 @@
                         Table ="dcr_Form_Templates"
                         KeyField ="Form_Template_ID"
                         runat="server"
-                        Title ="Templates|<a href='#' onclick='gridEditorFormNew({element: this, w: 800, h: 400});' class='btn btn-primary'>New Template</a>"
+                        Title ="Templates|<a href='#' onclick='gridEditorFormNew({element: this, w: 800, h: 440});' class='btn btn-primary'>New Template</a>"
                         Edit = "false"
-                        Links = "Name|gridEditorForm({element: this, w: RelativePixels('w', 1, 800), h: RelativePixels('h', 0.75, 400), afterLoad: attachOnChangeToMultiselect})|Fields|templateFields(this);"
+                        Links = "Name|gridEditorForm({element: this, w: RelativePixels('w', 1, 800), h: RelativePixels('h', 0.75, 440), afterLoad: attachOnChangeToMultiselect})|Fields|templateFields(this);"
                         Required ="Name|Subject_Category_IDs"
                         Blocked ="Subject_Category_IDs"
                         Hide="Form_Template_ID"

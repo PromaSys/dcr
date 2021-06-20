@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="c:\program files (x86)\microsoft visual studio\2019\enterprise\team tools\static analysis tools\fxcop\Xml\CodeAnalysisReport.xsl"?>
+<FxCopReport Version="16.0">
+ <Localized>
+  <String Key="Category">Category</String>
+  <String Key="Certainty">Certainty</String>
+  <String Key="CollapseAll">Collapse All</String>
+  <String Key="CheckId">Check Id</String>
+  <String Key="Error">Error</String>
+  <String Key="Errors">error(s)</String>
+  <String Key="ExpandAll">Expand All</String>
+  <String Key="Help">Help</String>
+  <String Key="Line">Line</String>
+  <String Key="Messages">message(s)</String>
+  <String Key="LocationNotStoredInPdb">[Location not stored in Pdb]</String>
+  <String Key="Project">Project</String>
+  <String Key="Resolution">Resolution</String>
+  <String Key="Rule">Rule</String>
+  <String Key="RuleFile">Rule File</String>
+  <String Key="RuleDescription">Rule Description</String>
+  <String Key="Source">Source</String>
+  <String Key="Status">Status</String>
+  <String Key="Target">Target</String>
+  <String Key="Warning">Warning</String>
+  <String Key="Warnings">warning(s)</String>
+  <String Key="ReportTitle">Code Analysis Report</String>
+ </Localized>
+ <Exceptions>
+  <Exception Keyword="CA0001" Kind="Engine">
+   <Type>Phx.FatalError</Type>
+   <ExceptionMessage>Exception of type 'Phx.FatalError' was thrown.</ExceptionMessage>
+   <StackTrace>   at Phx.FatalError.Dispatch()
+   at Phx.Logging.Diagnostics.DiagnosticMessage.LogMessage(Severity severity, DiagnosticInfo diagnosticInfo, SourceContext sourceContext, String descriptionString)
+   at Phx.PE.PEUtilities.UserError(String infoMessage)
+   at Phx.Pdb.ReaderImplementation.Open(Boolean loadTypeOnly)
+   at Phx.PEModuleUnit.LoadPdb()
+   at Phx.PE.ReaderPhase.CheckSymbolicInformation()
+   at Phx.PEModuleUnit.LoadGlobalSymbols()
+   at Phx.PEModuleUnit.LoadEncodedIRUnitList()
+   at Phx.PEModuleUnit.GetEnumerableContributionUnit(ContributionUnitEnumerationKind contributionUnitEnumerationKind)
+   at Phx.PEModuleUnit.GetEnumerableContributionUnit()
+   at Microsoft.FxCop.Engines.Phoenix.PreScanPass.GetFunctionUnits(PEModuleUnit peModuleUnit)
+   at Microsoft.FxCop.Engines.Phoenix.PreScanPass.Execute(ModuleUnit moduleUnit)
+   at Phx.Passes.Pass.DoPass(ModuleUnit moduleUnit)
+   at Phx.Passes.PassList.DoPassList(ModuleUnit moduleUnit)
+   at Microsoft.FxCop.Engines.Phoenix.PhoenixAnalysisEngine.Host.ExecutePasses(PEModuleUnit peModuleUnit)
+   at Microsoft.FxCop.Engines.Phoenix.PhoenixAnalysisEngine.AnalyzeInternal()
+   at Microsoft.FxCop.Engines.Phoenix.PhoenixAnalysisEngine.Analyze()
+   at Microsoft.FxCop.Common.EngineManager.Analyze(Project project, Boolean verboseOutput)</StackTrace>
+  </Exception>
+ </Exceptions>
+</FxCopReport>

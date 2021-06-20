@@ -1,0 +1,115 @@
+﻿<%@ master language="C#" autoeventwireup="true" inherits="SiteMaster, App_Web_qow2lv2b" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="apple-touch-icon" href="images/apple-icon-114x114.png"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title><%: Page.Title %> - <%=Application["ApplicationName"].ToString() %></title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+        <%: Styles.Render("~/Content/css") %>
+        <%: Scripts.Render("~/Scripts/js") %>
+    </asp:PlaceHolder>
+    
+    <link href="Content/Site_Mobile.css" rel="stylesheet" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--
+    <link href="Content/navbar_primary.css" rel="stylesheet" />
+    -->
+
+</head>
+<body>
+    <form runat="server">
+        
+        
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" runat="server" href="~/"><img src="<%= ResolveUrl("~/images/" + Application["ApplicationMenuLogo"].ToString()) %>" style="margin-top: -6px; height: 32px; <%= Session["DevCSS"].ToString() %>"/></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <!--
+                    <ul class="nav navbar-nav">
+                        <li><a runat="server" href="~/">Home</a></li>
+                        <li><a runat="server" href="~/About">About</a></li>
+                        <li><a runat="server" href="~/Contact">Contact</a></li>
+                    </ul>
+                    -->
+                    <%=Session["UserMenu"].ToString() %>
+                    
+                    <asp:LoginView runat="server" ViewStateMode="Disabled">
+                        <AnonymousTemplate>
+                            <ul class="nav navbar-nav navbar-right">
+                                <!--
+                                    <li><a runat="server" href="~/Account/Register">Register</a></li>
+                                -->
+                                <li><a runat="server" href="~/Account/Login">Log in</a></li>
+                            </ul>
+                        </AnonymousTemplate>
+                        <LoggedInTemplate>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a runat="server">Hello, <%=Session["UserName"].ToString()  %> !</a></li>
+                                <li>
+                                    <a runat="server" href="logout.aspx">Logout</a>
+                                </li>
+                            </ul>
+                        </LoggedInTemplate>
+                    </asp:LoginView>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid body-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            <!--
+            <hr />
+            
+            <footer class="navbar navbar-fixed-bottom text-center footer">
+                   <p class="text-muted" style="margin-top: 15px;">&copy; <%: DateTime.Now.Year %> - <%=Application["ApplicationName"].ToString() %></p>
+            </footer>
+            -->
+        </div>
+    </form>
+
+
+
+    <script>
+        
+
+        var pto;
+        var lto;
+
+        function ManageTimeout() {
+            var st = <%=Session.Timeout %>;
+            //var st = .4;
+            //alert(st);
+            var t = st * 60 * 1000;
+            //var t = 1 * 60 * 1000;
+            var w = (st - 1) * 60 * 1000;
+            //setTimeout("hgConfirm('Your session will expire in one minute.<br /><br />Do you want to continue working?', " + function(){location.reload(true);} + ",'Session Expiry Warning')", w);
+            pto = setTimeout("hgConfirm('Your session will expire in one minute.<br /><br />Do you want to continue working?', " + function () { RenewSession(); clearTimeout(pto); clearTimeout(lto); ManageTimeout();} + ",'Session Expiry Warning')", w);
+            lto = setTimeout("location.href = 'logout.aspx'", t);
+        }
+
+        ManageTimeout();
+
+        SetCookie("DeviceMode", "Mobile", 7);
+        DeviceMode = "Mobile";
+
+        $('.navbar-nav .dropdown:contains("Reports")').css('display', 'none');
+    </script>
+
+</body>
+</html>

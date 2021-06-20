@@ -1422,6 +1422,12 @@ namespace WebApp.App_Code
             FilterHTML = Label + "<br />" + FilterHTML.Replace("class=\"hgmultipleselect\" ", "class=\"hgResult filter\" style=\"height: " + Height + "px; overflow: auto;\" ").Replace("<input id=", "<input onclick=\"gridApplyFilters(this);\" id=");
             return FilterHTML;
         }
+        public string FilterDate(string ID, string Label, string Filters)
+        {
+            string FilterValue = GetPairValue(Filters, ID, "");
+            string FilterHTML = Label + "<br /><input id=\"" + ID + "\" value=\"" + FilterValue + "\" class=\"hgResult datepicker filter form-control\" onchange=\"gridApplyFilters(this);\" template=\"calendar\" />";
+            return FilterHTML;
+        }
         public void ReplaceXMLNodeValue(string documentPath, string selector, string attribute, string newValue)
         {
             XmlDocument doc = new XmlDocument();

@@ -29,47 +29,103 @@
     <form runat="server">
         
         
-        <div class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" runat="server" href="~/"><img src="<%= ResolveUrl("~/images/" + Application["ApplicationMenuLogo"].ToString()) %>" style="margin-top: -6px; height: 32px; <%= Session["DevCSS"].ToString() %>"/></a>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <!--
-                    <ul class="nav navbar-nav">
-                        <li><a runat="server" href="~/">Home</a></li>
-                        <li><a runat="server" href="~/About">About</a></li>
-                        <li><a runat="server" href="~/Contact">Contact</a></li>
-                    </ul>
-                    -->
-                    <%=Session["UserMenu"].ToString() %>
-                    
-                    <asp:LoginView runat="server" ViewStateMode="Disabled">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            
+            <a class="navbar-brand"  href="<%= Application["ApplicationAddress"].ToString() %>" target="_blank" title="Navigate to <%= Application["ApplicationName"].ToString() %>"><img src="<%= ResolveUrl("~/images/" + Application["ApplicationMenuLogo"].ToString()) %>" style="margin-top: -5px; margin-right:0px; height: 32px;  <%= Session["DevCSS"].ToString() %>;"/></a>
+            
+            <a href="#" onclick="gridFiltersToggle(this);" class="FilterToggle badge" style="color: white; font-size: 1.5em;" title="Filter toggle" ><span class="fa fa-filter" ></span></a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <%=Session["UserMenu"].ToString() %>
+                <!--
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Disabled</a>
+                    </li>
+                </ul>
+                
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>-->
+
+                <asp:LoginView runat="server" ViewStateMode="Disabled">
                         <AnonymousTemplate>
                             <ul class="nav navbar-nav navbar-right">
                                 <!--
                                     <li><a runat="server" href="~/Account/Register">Register</a></li>
-                                -->
+                                
                                 <li><a runat="server" href="~/Account/Login">Log in</a></li>
+                                -->
                             </ul>
                         </AnonymousTemplate>
                         <LoggedInTemplate>
-                            <ul class="nav navbar-nav navbar-right">
-                                <li><a runat="server">Hello, <%=Session["UserName"].ToString()  %> !</a></li>
-                                <li>
-                                    <a runat="server" href="logout.aspx">Logout</a>
+                            <ul class="nav navbar-nav navbar-right navbar-default">
+                                 
+                                <li class="MainMenuSearch" style="display: none;">
+                                    <div class="input-group" style="width: 240px; margin-right: 8px; ">
+                                        <input id="txtSearchText" type="text" class="form-control" placeholder="Search all fields" onkeyup="Search(this, event);" />
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-secondary" onclick="Search(document.getElementById('txtSearchText'),null);" ><i class="fa fa-search"></i></button>
+                                            </div>
+                                    </div>
                                 </li>
+                                <li class="nav-item">
+                                    <!--
+                                    <a runat="server" href="~/Account/Manage" title="Manage your account">Hello, <%=Session["UserName"].ToString()  %> !</a>
+                                    <a  href="#" onclick="ManageAccount();" title="Manage your account">Hello, <%=Session["UserName"].ToString()  %> !</a>
+                                    -->
+                                    <a class="nav-link" href="#" title="Manage your account">Hello, <%=Session["UserName"].ToString()  %> !</a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link" runat="server" href="./logout.aspx">LOGOUT&nbsp;&nbsp;</a>
+                                </li>
+                                <%/* %>
+                                <li>
+                                    <div style="padding-top: 4px; padding-right: 20px; padding-left: 12px;"> 
+                                       <div id="google_translate_element" ></div>  
+                                       <script type="text/javascript">  
+                                           function googleTranslateElementInit() {
+                                               new google.translate.TranslateElement
+                                                   ({
+                                                       pageLanguage: 'en' //,
+                                                       //layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                                                   },
+                                                       'google_translate_element');
+                                           }
+                                       </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">  
+                                    </script>  
+                                    </div>  
+                                </li>
+                                <%*/ %>
                             </ul>
                         </LoggedInTemplate>
                     </asp:LoginView>
-                </div>
+
             </div>
-        </div>
+        </nav>
+
         <div class="container-fluid body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>

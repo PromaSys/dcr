@@ -1,0 +1,28 @@
+﻿#template-form-wrapper {
+    margin: 1rem 2rem;
+}
+
+.multi-select-wrapper {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.bold {
+   font-weight: 600;
+}
+
+.multi-select {
+    height: 150px;
+    overflow: auto;
+}
+
+select#selNewFormTemplate {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 1px solid gray;
+    outline: 0px;
+    background-color: transparent;
+}

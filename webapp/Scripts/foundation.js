@@ -9,6 +9,8 @@ var LastPopSpreadf;
 
 var SpreadOD = [];
 
+var datePickerFormat = 'm/d/yyyy';
+
 /*
 var SpreadInterval;
 
@@ -344,19 +346,22 @@ function ScaleMenu() {
 }
 
 //#region update hg changes
-function GridRowClicked(e, gid, r) {
+function GridRowClicked(e, gid, r)
+{
     if (e.innerHTML.toString().toLowerCase().indexOf("input") > -1) return false;
 
     //get row being edited
     var re = $("table[id*=" + gid + "] tbody tr input").first();
     var reindex;
 
-    if (re.length == 1) {
+    if (re.length == 1)
+    {
         reindex = re[0].parentNode.parentNode.rowIndex;
 
         __doPostBack('ctl00$MainContent$' + gid, 'Update$' + r);
     }
-    else {
+    else
+    {
         __doPostBack('ctl00$MainContent$' + gid, 'Edit$' + r);
     }
 
@@ -450,7 +455,8 @@ function GetResultCheckBox(e) {
         result = "✓";
         resultkey = "1";
     }
-    else {
+    else
+    {
         //result = "☐"; //"&#9744;";
         result = "";
         resultkey = "0";
@@ -608,7 +614,8 @@ function hgEdit(e) {
                 else if (ftp.indexOf("template='multipleselect'") > -1) {
                     //ftpAttr += "onchange='GetResultMultiSelect(this);' ";
                     var values = $(this).attr('key').split(", ");
-                    for (var i = 0; i < values.length; i++) {
+                    for (var i = 0; i < values.length; i++)
+                    {
                         ftp = ftp.replace("value='" + values[i] + "'", "value='" + values[i] + "' checked");
                     }
                     ftp = ftp.replace(/value=/gi, " _onclick='GetResultMultiSelect(this);' value=");
@@ -914,6 +921,10 @@ function gridPop(o) {
         };
     }
 
+    if (o.saveButtonText == null) {
+        o.saveButtonText = "Save";
+    }
+
     if (o.buttons == null) {
         o.buttons = {
             Cancel: {
@@ -922,7 +933,7 @@ function gridPop(o) {
                 }
             },
             'Save': {
-                text: 'Save', priority: 'primary', style: 'background: #428BCA; color: #fff;', click: function () {
+                text: o.saveButtonText, priority: 'primary', style: 'background: #428BCA; color: #fff;', click: function () {
                     if (o.saveFunction != null) {
                         o.saveFunction();
                         return;
@@ -1009,8 +1020,8 @@ function gridPopDocs(context, contextId, xOffset, yOffset, width, height, elem, 
         w: width,
         h: height,
         element: elem,
-        m: minimal, //single column
-        ro: readonly
+        m: minimal, //single column 1 or 0
+        ro: readonly // 1 or 0
     });
 }
 
@@ -1575,7 +1586,7 @@ function gridPostChanges(o) {
         url: 'Process_Change',
         async: true,
         processData: false,
-        data: o.changes,
+        data: changes,
         success: function (response) {
             o.success(response);
         },
@@ -1912,13 +1923,18 @@ function gridEditorForm(o) {
                                         else {
                                             $hgTD.html($(this).attr('result'));
                                         }
-                                    });
-                                    $('#diae' + TableID).dialog('destroy').remove();
+                                    });                        
                                 }
-                                else {
-                                    $('#diae' + TableID).dialog('destroy').remove();
+                                
+                                $('#diae' + TableID).dialog('destroy').remove();                                
+                                
+                                if (kfv == '-1' && $('#dia' + TableID.replace('tabGrid', '')).length == 1) {
+                                    $('#butRefresh' + TableID.replace('tabGrid', '')).click();
+                                }
+                                else if (kfv == '-1') {
                                     ReloadPage();
                                 }
+                                
                             }
                         });
                     }
@@ -2113,7 +2129,8 @@ function gridBox(o) {
     if (type == "success") { backgroundColor = '#5CB85C'; }
     if (type == "info") { backgroundColor = '#5BC0DE'; }
     if (type == "warning") { backgroundColor = '#F0AD4E'; }
-    if (type == "confirm") { backgroundColor = '#F0AD4E'; }
+
+    if (boxType == "confirm") { backgroundColor = '#F0AD4E'; }
 
     if ($(window).innerWidth() < width) {
         width = $(window).innerWidth() * .9;
@@ -2203,6 +2220,33 @@ function gridBoxS(title, body, type, width) {
     gridBox(object)
 }
 
+function gridReloadDialog(context, remeberVericalScroll) {
+
+    var $dia = $('#dia' + context);
+
+    var verticalScrolls = new Array();
+
+    if (remeberVericalScroll) {
+        // all hg elements with a vetical scroll
+        $dia.find('.tablediv').each(function () {
+            verticalScrolls.push($(this).scrollTop());
+        });
+    }
+
+    //$dia.load(u);
+    $('#butRefresh' + context).click();
+
+    if (remeberVericalScroll) {
+        WaitUntil(function () { return $dia.find('.tablediv').length > 0; }, function () {
+            $dia.find('.tablediv').each(function (index) {
+                $(this).scrollTop(verticalScrolls[index]);
+            });
+        });
+
+
+    }
+}
+
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -2263,10 +2307,15 @@ function gridDocDialog(o) {
                     }
                     else {
                         var docCount = $('#ifrDocs').contents().find('tbody tr').length;
+
+                        // update interface
+                        var docText = $(e).text();
+                        if (docText == 'None' || docText.substr(docText.length - 4) == 'Docs') {
                         $(e).text(docCount + ' Docs');
                         if (docCount == 0) {
                             $(e).text('None');
                         }
+                    }
                     }
 
                     $(this).dialog('destroy').remove();
@@ -2762,33 +2811,6 @@ function gridRowPopFields(o) {
 
 }
 
-function gridReloadDialog(context, remeberVericalScroll) {
-
-    var $dia = $('#dia' + context);
-
-    var verticalScrolls = new Array();
-
-    if (remeberVericalScroll) {
-        // all hg elements with a vetical scroll
-        $dia.find('.tablediv').each(function () {
-            verticalScrolls.push($(this).scrollTop());
-        });
-    }
-
-    //$dia.load(u);
-    $('#butRefresh' + context).click();
-
-    if (remeberVericalScroll) {
-        WaitUntil(function () { return $dia.find('.tablediv').length > 0; }, function () {
-            $dia.find('.tablediv').each(function (index) {
-                $(this).scrollTop(verticalScrolls[index]);
-            });
-        });
-
-
-    }
-}
-
 function _gridRowEdit(o) {
     /* usage
     gridRowEdit({
@@ -2907,6 +2929,7 @@ function GetPairValue(text, find, w) {
     return w;
 }
 
+// left menu filters
 function gridApplyFilters_(e, setFilters) {
 
     // if setFilters are specified, then set
@@ -2991,13 +3014,18 @@ function gridApplyFilters(e, setFilters) {
         }
     }
 
+    // bypass if apply button exists
+    if ($('.filterApply').length == 1 && !$(e).hasClass('filterApply')) {
+        return;
+    }
+
     var filters = '';
     //iterate through filters
     $('.filter').each(function () {
         var template = $(this).attr('template');
         if (template == 'select') {
             filters += $(this).attr('id') + '|' + $(this).val() + '|';
-        } else if (template = 'multipleselect') {
+        } else if (template == 'multipleselect') {
             var mf = '';
             var f = $(this).attr('id');
             $(this).find('input:checked').each(function () {
@@ -3010,6 +3038,10 @@ function gridApplyFilters(e, setFilters) {
                 mf = mf.substr(0, mf.length - 1);
                 filters += f + '|' + mf + '|';
             }
+        } else if (template == 'calendar') {
+            var f = $(this).attr('id');
+            var mf = $(this).val();
+            filters += f + '|' + mf + '|';
         }
     });
 
@@ -3032,6 +3064,7 @@ function gridApplyFilters(e, setFilters) {
     });
 }
 
+// left menu filters
 function gridFiltersSetVScroll() {
     var vs = GetCookie('gridfiltersvscroll');
     if (vs == '' || vs == null) return;
@@ -3040,6 +3073,15 @@ function gridFiltersSetVScroll() {
         var fvs = this.split(',');
         $('#' + fvs[0]).scrollTop(fvs[1]);
     });
+}
+
+function gridFiltersToggle(elem) {
+    if ($('.LeftTD:visible').length == 1) {
+        $('.LeftTD').hide();
+    }
+    else {
+        $('.LeftTD').show();
+    }
 }
 
 //#region RowGroups
@@ -5195,6 +5237,8 @@ function ReloadPage() {
     location.href = url;
 }
 
+
+
 function SetGridPage(p, c) {
     //GrayOut(true);
     SetCookie(c, p, 1);
@@ -6173,7 +6217,8 @@ function Search(s, ev) {
     else if (ev.keyCode != 13) {
         return;
     }
-    else {
+    else
+    {
         Search = s.value;
     }
 
@@ -6419,7 +6464,9 @@ function GetResultSignature(e) {
     //e.setAttribute("resultkey", result);
 }
 
-
+function DecodeEscape(t) {
+    return decodeURIComponent(unescape(t));
+}
 
 //#region Legacy
 function qstojson(qs) {
@@ -6458,7 +6505,7 @@ function qstojson(qs) {
 
 function MessageBox(title, body, type, width, OKFunction, cancel) {
 
-    var noButtontext;
+    var noButtonText;
     var NoFunction;
 
     if (cancel != null) {
@@ -6477,7 +6524,6 @@ function MessageBox(title, body, type, width, OKFunction, cancel) {
     })
 }
 
-
 function PopDialog(dialogP, Context, my, at, of, w, h, Title, QS, load, aText, aFunction) {
 
     QS = qstojson(QS);
@@ -6491,6 +6537,31 @@ function PopDialog(dialogP, Context, my, at, of, w, h, Title, QS, load, aText, a
         saveFunction: function () {
             aFunction();
         },
+        saveButtonText: aText,
+        my: my,
+        at: at,
+        of: of,
+        w: w,
+        h: h
+    })
+}
+
+function PopDialogV(dialogV, Context, my, at, of, w, h, Title, QS, load, aFunction) {
+
+    QS = qstojson(QS);
+
+    gridPop({
+        context: Context,
+        type: 'vertical',
+        title: Title,
+        data: QS,
+        load: load,
+        saveFunction: function () {
+            aFunction();
+        },
+        my: my,
+        at: at,
+        of: of,
         w: w,
         h: h
     })
@@ -6544,5 +6615,35 @@ function hgConfirm(Body, YesFunction, Title, w, h, my, at, of) {
         yesButtonText: ' Yes ',
         noButtonText: ' No '
     });
+}
+
+function ReloadDialog(context) {
+    gridReloadDialog(context, true);
+}
+
+function WaitBox(title, body, type, width) {
+
+    gridBox({
+        boxType: 'wait',
+        title: title,
+        body: body,
+        type: type,
+        width: width
+    });
+
+}
+
+function WaitBoxClose() {
+    gridBox({
+        closeBox: true
+    });
+}
+
+function hgEditorForm(e, w, h) {
+    gridEditorForm({
+        element: e,
+        w: w,
+        h: h
+    })
 }
 //#endregion

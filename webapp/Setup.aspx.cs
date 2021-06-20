@@ -156,8 +156,24 @@ public partial class Setup : System.Web.UI.Page
             Grid.Widths = "default";
             //Grid.DoNotEdit = "Set_Theme|Preview_Theme";
             Grid.Edit = true;
+            Grid.NewRecords = 25;
             //Grid.Labels = "Stylesheet_Name|Theme";
             //Grid.TextAreas = "Template|30";
+            Grid.AddSQL = gc.TraceSQL();
+        }
+        else if (Session["SetupTopic"].ToString() == "Settings")
+        {
+            dtc = gc.GetTables("exec app_sp_setup_settings");
+            Grid.GridTable = dtc[0];
+            Grid.Table = "app_Settings";
+            Grid.KeyField = "Setting_ID";
+            Grid.Title = "settings";
+            Grid.Hide = "Setting_ID";
+            Grid.ColumnStyle = "Day_Of_Week_Offset|text-align: left;";
+            Grid.Widths = "";
+            Grid.Edit = true;
+            Grid.Labels = "Day_Of_Week_Offset|Weekday";
+            Grid.Templates = "Day_Of_Week_Offset|" + gc.GetSelect("selWeekdays", true, dtc[1]);
             Grid.AddSQL = gc.TraceSQL();
         }
 

@@ -219,7 +219,7 @@
             <hr />
             
             <footer class="navbar fixed-bottom footer d-flex justify-content-center">
-                   <p style="margin-top: 15px;">&copy; <%: DateTime.Now.Year %> - <%=Application["ApplicationName"].ToString() %></p>
+                   <p style="margin-top: 0px; margin-bottom: 0px;">&copy; <%: DateTime.Now.Year %> - <%=Application["ApplicationName"].ToString() %></p>
             </footer>
         </div>
     </form>

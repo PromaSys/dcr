@@ -51,6 +51,11 @@
                             Subject Categories
                         </td>
                      </tr>
+                     <tr>
+                        <td class="LeftMenuItem" onclick="LeftMenu('Settings');">
+                            Settings
+                        </td>
+                     </tr>
                     <!--
                     <tr>
                         <td class="LeftMenuItem" onclick="LeftMenu('Card Channel Compatibility');">
@@ -118,15 +123,15 @@
                 Topic = "Users";
             }
             $('.LeftTable td[onclick*="\'' + Topic + '\'"]').css('font-weight', 'bold');
-
+            
             $(window).on('beforeunload', function () {
                 event.preventDefault();
                 gridSaveGrids({
                     oninvalid: function () { $(window).off('beforeunload'); }
                 });
-                event.returnValue = '';
+                //event.returnValue = '';
             });
-
+            
             // search users
             var SearchUsers = GetCookie('SearchUsers');
 
@@ -148,7 +153,7 @@
                 $('#txtSearchText').focus();
             }
 
-            //PopEditor('Grid');
+            PopEditor('Grid');
 
         });
 
